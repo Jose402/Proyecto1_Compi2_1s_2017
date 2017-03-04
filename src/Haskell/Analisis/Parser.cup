@@ -1,0 +1,245 @@
+package Haskell.Analisis;
+import Graphik.Ast.*;
+import Interfaz.Inicio;
+
+import java_cup.runtime.*;
+
+parser code
+{:
+    /**Metodo al que se llama automáticamente ante algún error sintactico.*/
+    public void syntax_error(Symbol s){
+        System.out.println("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador "
+        +s.value + " no reconocido." );
+    }
+
+    /**Metodo al que se llama en el momento en que ya no es posible una recuperación de
+    errores.*/
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        System.out.println("Error en la Línea " + (s.right+1)+ "Columna "+(s.left+1)+". Identificador " +
+        s.value + " no reconocido.");
+    }
+:}
+
+
+/*terminales de simbolos reservados*/
+terminal String corInicio,corFin,llaveInicio,llaveFin,dosPuntos,igual,coma,parenFin,parenInicio;
+
+/*Sentencias de control*/
+terminal String si,then,sino,caso,iden,end,dolar,calcular;
+
+/*funciones propias del lenguaje*/
+terminal String let,ans,succ,decc,min,max,concatenar,indice,sum,product,revers,impr;
+terminal String par,asc,desc,length;
+
+/* simbolos de operaciones aritmeticas. */
+terminal String mas, menos, mul, div,mod,pot,sqrt;
+
+/*simbolos de operaciones relacionales*/
+terminal String mayor,menor,igualIgual,mayorIgual,menorIgual,noIgual;
+
+/*simbolos de operaciones logicas*/
+terminal String or,and;
+
+/*
+* Este terminal tiene un valor string. Recuerda que le dábamos el valor
+* en el código del analizador léxico, al darle como parámetro un valor
+* string al objeto Symbolo.
+*/
+/*Contiene el valor del tipo de dato especifico*/
+terminal String numero,cadena,entero;
+
+/*
+* Aquí están los no terminales
+*/
+
+non terminal Nodo EXPA,EXPL,EXPR,DATO;
+non terminal Nodo INICIO,CALCULAR,LISTA,VALORES,SUCC,DECC,MIN,MAX,CONCA;
+non terminal Nodo SUM,PRODUCT,REVERS,IMPR,PAR,ASC,DESC,LENGTH,VALOR,ARRAY,ARRAY2,SENTENCIAS,SENTENCIA;
+non terminal Nodo INDICE,ACCESO,TIPOARRAY,SENTENCIAEXT;
+non terminal Nodo FUNCION,PARAMETROS,LLAMADA,SI,CASO,CASOS,SELECCIONAR;
+
+/* Precedences */
+precedence left mas, menos;
+precedence left mul, div,mod;
+precedence left pot,sqrt;
+precedence left parenInicio,parenFin;
+precedence left igualIgual,mayor,menor,mayorIgual,menorIgual,noIgual;
+precedence left or;
+precedence left and;
+
+/* ­­­­­­­­­­­­­­ Declaración de la gramática  ­­­­­­­­­­­ */
+start with INICIO; // start with sirve para indicarle al parser con que produccion empezar
+
+INICIO::=FUNCION;
+
+//expresiones artmeticas---falta llamada metodo,aumento y decremento
+EXPA::=EXPA:d1 mas:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPA:d1 menos:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPA:d1 mul:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPA:d1 div:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPA:d1 pot:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPA:d1 sqrt:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPA:d1 mod:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |parenInicio EXPA:d1 parenFin {:RESULT=d1;:}
+    |DATO:d1 {:RESULT=d1;:}    
+    |iden:id1 {:RESULT=new Nodo("id",id1,id1right,id1left);:}
+    |VALOR:val {:RESULT=val;:};
+
+EXPR::=EXPA:d1 igualIgual:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPA:d1 mayor:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPA:d1 menor:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPA:d1 mayorIgual:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPA:d1 menorIgual:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPA:d1 noIgual:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPA:d1 {:RESULT=d1;:};
+
+EXPL::=EXPL:d1 and:op EXPL:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPL:d1 or:op EXPL:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |parenInicio EXPL:d1 parenFin {:RESULT=d1;:}
+    |EXPR:d1 {:RESULT=d1;:};
+
+DATO::=numero:dato {:RESULT=new Nodo("numero",dato,datoright,datoleft);:}
+    |cadena:dato {:RESULT=new Nodo("cadena",dato,datoright,datoleft);:};
+
+
+
+//devuelven un valor numerico
+CALCULAR::=dolar calcular:cal EXPL:exp dolar{:
+		RESULT=new Nodo("calcular",calright,calleft);
+		RESULT.add(exp);
+		:};
+
+SUCC::=dolar succ:succ CALCULAR:calc dolar{:
+	RESULT=new Nodo("succ",succright,succleft);
+	RESULT.add(calc);
+	:};
+
+DECC::=dolar decc:decc CALCULAR:calc dolar{:
+	RESULT=new Nodo("decc",deccright,deccleft);
+	RESULT.add(calc);
+	:};
+
+MIN::=dolar min:min iden:id dolar {:
+	RESULT=new Nodo("min",minright,minleft);
+	Nodo n1=new Nodo("id",id,idright,idleft);
+	RESULT.add(n1);
+	:}
+	|dolar min:min LISTA:lista dolar{:
+	RESULT=new Nodo("min",minright,minleft);
+	RESULT.add(lista);
+	:}
+	|dolar min:min cadena:cad dolar{:
+	RESULT=new Nodo("min",minright,minleft);
+	Nodo n1=new Nodo("cadena",cad,cadright,cadleft);
+	RESULT.add(n1);
+	:};
+
+MAX::=dolar max iden dolar
+	|dolar max LISTA dolar
+	|dolar max cadena dolar;
+
+// operaciones en listas
+SUM::=dolar sum iden dolar
+	|dolar sum LISTA dolar;
+
+PRODUCT::=dolar product iden dolar
+		|dolar product LISTA dolar;
+
+LENGTH::=dolar length iden dolar
+		|dolar length LISTA dolar
+		|dolar length cadena dolar;
+
+
+VALOR::=CALCULAR:val {:RESULT=val;:}
+		|SUCC:val {:RESULT=val;:}
+		|DECC:val {:RESULT=val;:}
+		|MIN:val {:RESULT=val;:}
+		|MAX:val {:RESULT=val;:}
+		|SUM:val {:RESULT=val;:}
+		|PRODUCT:val {:RESULT=val;:}
+		|LENGTH:val {:RESULT=val;:};
+
+
+
+
+//devuenven una lista
+CONCA::= TIPOARRAY concatenar TIPOARRAY;
+
+TIPOARRAY::=iden
+		|ARRAY
+		|cadena
+		|REVERS
+		|IMPR
+		|PAR
+		|ASC
+		|DESC;
+
+REVERS::=dolar revers TIPOARRAY dolar;
+
+IMPR::=dolar impr TIPOARRAY dolar;
+
+PAR::=dolar par TIPOARRAY dolar;
+
+ASC::=dolar asc TIPOARRAY dolar;
+
+DESC::=dolar desc TIPOARRAY dolar;
+
+//declaracion de listas
+LISTA::= let iden igual ARRAY
+		|let iden igual CONCA;
+
+ARRAY::=corInicio VALORES corFin
+		|corInicio ARRAY2 corFin;
+
+ARRAY2::=ARRAY2 coma ARRAY
+		|ARRAY;
+
+VALORES::=VALORES coma EXPL
+		|EXPL;
+
+//acceso a listas
+ACCESO::=dolar iden INDICE dolar;		
+
+INDICE::=INDICE indice numero
+		|indice numero;
+
+
+SENTENCIAS::=SENTENCIAS SENTENCIA
+			|SENTENCIA;
+
+SENTENCIA::=CALCULAR
+			|LISTA
+			|CONCA
+			|SUCC
+			|DECC
+			|MIN
+			|MAX
+			|SUM
+			|PRODUCT
+			|LENGTH
+			|ACCESO
+			|REVERS
+			|IMPR
+			|PAR
+			|ASC
+			|DESC
+			|LLAMADA
+			|SI
+			|SELECCIONAR;
+
+//funcion
+FUNCION::=iden PARAMETROS igual SENTENCIAS end;
+
+PARAMETROS::=PARAMETROS coma iden
+			|iden;
+
+LLAMADA::=dolar iden llaveInicio VALORES llaveFin dolar;
+
+SI::=si EXPL then SENTENCIAS sino SENTENCIAS end;
+
+SELECCIONAR::= caso EXPA CASOS end;
+
+CASOS::=CASOS CASO
+		|CASO;
+
+CASO::=EXPA dosPuntos llaveInicio SENTENCIAS llaveFin;

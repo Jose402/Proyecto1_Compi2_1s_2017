@@ -1,0 +1,10 @@
+digraph lista{ rankdir=TB;node [shape = box, style=rounded]; nodo928088907[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo928088907"-> "nodo1216531788"
+nodo1216531788[label="* ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1216531788"-> "nodo57957829"
+"nodo1216531788"-> "nodo1287139912"
+nodo57957829[label="2  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1287139912[label="min ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1287139912"-> "nodo1357724753"
+nodo1357724753[label="l1  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
+}
