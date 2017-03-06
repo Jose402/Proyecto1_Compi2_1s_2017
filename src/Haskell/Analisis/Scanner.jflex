@@ -24,7 +24,7 @@ numero =[0-9]+ "."? [0-9]*
 entero =[0-9]+ 
 letra =[a-zA-ZÑñ]+
 iden ={letra}({letra}|{entero}|"_")*
-
+caracter="'"[^*]"'"
 
 
 
@@ -69,16 +69,18 @@ iden ={letra}({letra}|{entero}|"_")*
 
 
 //SIMBOLOS
+"\n"             {imprimir(yytext(),"salto");return new Symbol(Simbolo.salto,yycolumn,yyline,yytext());}
 "="              {imprimir(yytext());return new Symbol(Simbolo.igual,yycolumn,yyline,yytext());}
 "["              {imprimir(yytext(),"soy corInicio");return new Symbol(Simbolo.corInicio,yycolumn,yyline,yytext());}
 "]"              {imprimir(yytext(),"soy corFin");return new Symbol(Simbolo.corFin,yycolumn,yyline,yytext());}
-"$"              {imprimir(yytext(),"soy corFin");return new Symbol(Simbolo.dolar,yycolumn,yyline,yytext());}
+"$"              {imprimir(yytext(),"soy dolar");return new Symbol(Simbolo.dolar,yycolumn,yyline,yytext());}
 "{"              {imprimir(yytext(),"soy llaveInicio");return new Symbol(Simbolo.llaveInicio,yycolumn,yyline,yytext());}
 "}"              {imprimir(yytext(),"soy llaveFin");return new Symbol(Simbolo.llaveFin,yycolumn,yyline,yytext());}
 ":"              {imprimir(yytext(),"soy dosPuntos");return new Symbol(Simbolo.dosPuntos,yycolumn,yyline,yytext());}  
 ","              {imprimir(yytext(),"soy coma");return new Symbol(Simbolo.coma,yycolumn,yyline,yytext());}
 "("              {imprimir(yytext(),"soy parenInicio");return new Symbol(Simbolo.parenInicio,yycolumn,yyline,yytext());}
 ")"              {imprimir(yytext(),"soy parenFin");return new Symbol(Simbolo.parenFin,yycolumn,yyline,yytext());}
+";"              {imprimir(yytext(),"soy puntoComa");return new Symbol(Simbolo.puntoComa,yycolumn,yyline,yytext());}
 
 //PALABRAS RESERVADAS
 "let"       {imprimir(yytext());return new Symbol(Simbolo.let,yycolumn,yyline,yytext());}
@@ -113,13 +115,14 @@ iden ={letra}({letra}|{entero}|"_")*
 {numero}         {imprimir(yytext(),"soy numero");return new Symbol(Simbolo.numero,yycolumn,yyline,yytext());}
 {cadena}         {imprimir(yytext(),"soy cadena");return new Symbol(Simbolo.cadena,yycolumn,yyline,yytext());}
 {iden}           {imprimir(yytext(),"soy iden");return new Symbol(Simbolo.iden,yycolumn,yyline,yytext());}
+{caracter}           {imprimir(yytext(),"soy caracter");return new Symbol(Simbolo.caracter,yycolumn,yyline,yytext());}
 
 /* COMENTARIOS */
 {Comentario2}    { /* Se ignoran */}
 {Comentario1}     { /* Se ignoran */}
 
 /* BLANCOS */
-[ \t\r\f\n]+     {/* Se ignoran */}
+[ \r\t\f]+     {/* Se ignoran */}
 
 
 /* Cualquier Otro */

@@ -22,7 +22,8 @@ parser code
 
 
 /*terminales de simbolos reservados*/
-terminal String corInicio,corFin,llaveInicio,llaveFin,dosPuntos,igual,coma,parenFin,parenInicio;
+terminal String corInicio,corFin,llaveInicio,llaveFin,dosPuntos,igual,coma,parenFin,parenInicio,salto;
+terminal String puntoComa;
 
 /*Sentencias de control*/
 terminal String si,then,sino,caso,iden,end,dolar,calcular;
@@ -46,17 +47,19 @@ terminal String or,and;
 * string al objeto Symbolo.
 */
 /*Contiene el valor del tipo de dato especifico*/
-terminal String numero,cadena,entero;
+terminal String numero,cadena,entero,caracter;
 
 /*
 * Aquí están los no terminales
 */
 
 non terminal Nodo EXPA,EXPL,EXPR,DATO;
-non terminal Nodo INICIO,CALCULAR,LISTA,VALORES,SUCC,DECC,MIN,MAX,CONCA;
-non terminal Nodo SUM,PRODUCT,REVERS,IMPR,PAR,ASC,DESC,LENGTH,VALOR,ARRAY,ARRAY2,SENTENCIAS,SENTENCIA;
-non terminal Nodo INDICE,ACCESO,TIPOARRAY,SENTENCIAEXT;
-non terminal Nodo FUNCION,PARAMETROS,LLAMADA,SI,CASO,CASOS,SELECCIONAR;
+non terminal Nodo INICIO,CALCULAR,LISTA,VALORES;
+non terminal Nodo ARRAY,ARRAY2,SENTENCIAS,SENTENCIA,EXPC;
+non terminal Nodo INDICE,ACCESO,SIMPLIFICADA,TIPOSIMPLIFICADA,VALOREXP;
+non terminal Nodo FUNCION,PARAMETROS,PARAMETROSTAR,LLAMADA,SI,CASO,CASOS,SELECCIONAR,VALORCASE;
+non terminal Nodo SALTOS,OPERACIONLISTA,TIPOOPERACIONLISTA,OPERACIONLISTA2,TIPOOPERACIONLISTA2;
+non terminal Nodo CONCA,TIPOLISTA,TIPOVALOR;
 
 /* Precedences */
 precedence left mas, menos;
@@ -67,10 +70,14 @@ precedence left igualIgual,mayor,menor,mayorIgual,menorIgual,noIgual;
 precedence left or;
 precedence left and;
 
+precedence left sum,max,min,product,length,revers,impr,par,asc,desc;
+precedence left concatenar;
+
 /* ­­­­­­­­­­­­­­ Declaración de la gramática  ­­­­­­­­­­­ */
 start with INICIO; // start with sirve para indicarle al parser con que produccion empezar
 
-INICIO::=FUNCION;
+INICIO::=FUNCION
+	|SENTENCIA;
 
 //expresiones artmeticas---falta llamada metodo,aumento y decremento
 EXPA::=EXPA:d1 mas:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
@@ -81,16 +88,20 @@ EXPA::=EXPA:d1 mas:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1
     |EXPA:d1 sqrt:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
     |EXPA:d1 mod:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
     |parenInicio EXPA:d1 parenFin {:RESULT=d1;:}
-    |DATO:d1 {:RESULT=d1;:}    
-    |iden:id1 {:RESULT=new Nodo("id",id1,id1right,id1left);:}
-    |VALOR:val {:RESULT=val;:};
+    |DATO:d1 {:RESULT=d1;:}  
+    |VALOREXP:val {:RESULT=val;:} 
+    |iden:id1 {:RESULT=new Nodo("id",id1,id1right,id1left);:};
 
-EXPR::=EXPA:d1 igualIgual:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
-    |EXPA:d1 mayor:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
-    |EXPA:d1 menor:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
-    |EXPA:d1 mayorIgual:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
-    |EXPA:d1 menorIgual:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
-    |EXPA:d1 noIgual:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+EXPC::=iden:id {:RESULT=new Nodo("id",id,idright,idleft);:}
+	|VALOREXP:val {:RESULT=val;:};
+}
+
+EXPR::=EXPC:d1 igualIgual:op EXPC:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPC:d1 mayor:op EXPC:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPC:d1 menor:op EXPC:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPC:d1 mayorIgual:op EXPC:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPC:d1 menorIgual:op EXPC:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPC:d1 noIgual:op EXPC:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
     |EXPA:d1 {:RESULT=d1;:};
 
 EXPL::=EXPL:d1 and:op EXPL:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
@@ -102,6 +113,8 @@ DATO::=numero:dato {:RESULT=new Nodo("numero",dato,datoright,datoleft);:}
     |cadena:dato {:RESULT=new Nodo("cadena",dato,datoright,datoleft);:};
 
 
+SALTOS::=SALTOS salto
+		|salto;
 
 //devuelven un valor numerico
 CALCULAR::=dolar calcular:cal EXPL:exp dolar{:
@@ -109,84 +122,49 @@ CALCULAR::=dolar calcular:cal EXPL:exp dolar{:
 		RESULT.add(exp);
 		:};
 
-SUCC::=dolar succ:succ CALCULAR:calc dolar{:
-	RESULT=new Nodo("succ",succright,succleft);
-	RESULT.add(calc);
-	:};
+SIMPLIFICADA::=dolar TIPOSIMPLIFICADA CALCULAR dolar;
 
-DECC::=dolar decc:decc CALCULAR:calc dolar{:
-	RESULT=new Nodo("decc",deccright,deccleft);
-	RESULT.add(calc);
-	:};
+TIPOSIMPLIFICADA::=succ
+				|decc;
 
-MIN::=dolar min:min iden:id dolar {:
-	RESULT=new Nodo("min",minright,minleft);
-	Nodo n1=new Nodo("id",id,idright,idleft);
-	RESULT.add(n1);
-	:}
-	|dolar min:min LISTA:lista dolar{:
-	RESULT=new Nodo("min",minright,minleft);
-	RESULT.add(lista);
-	:}
-	|dolar min:min cadena:cad dolar{:
-	RESULT=new Nodo("min",minright,minleft);
-	Nodo n1=new Nodo("cadena",cad,cadright,cadleft);
-	RESULT.add(n1);
-	:};
+VALOREXP::=SIMPLIFICADA
+		|ACCESO
+		|CALCULAR
+		|OPERACIONLISTA;
 
-MAX::=dolar max iden dolar
-	|dolar max LISTA dolar
-	|dolar max cadena dolar;
+//devuelve un valor y es operacion con listas
 
-// operaciones en listas
-SUM::=dolar sum iden dolar
-	|dolar sum LISTA dolar;
-
-PRODUCT::=dolar product iden dolar
-		|dolar product LISTA dolar;
-
-LENGTH::=dolar length iden dolar
-		|dolar length LISTA dolar
-		|dolar length cadena dolar;
+OPERACIONLISTA::=dolar TIPOOPERACIONLISTA TIPOLISTA dolar;
 
 
-VALOR::=CALCULAR:val {:RESULT=val;:}
-		|SUCC:val {:RESULT=val;:}
-		|DECC:val {:RESULT=val;:}
-		|MIN:val {:RESULT=val;:}
-		|MAX:val {:RESULT=val;:}
-		|SUM:val {:RESULT=val;:}
-		|PRODUCT:val {:RESULT=val;:}
-		|LENGTH:val {:RESULT=val;:};
+TIPOOPERACIONLISTA::=min
+					|max
+					|sum
+					|product
+					|length;
 
 
+//----------------------------------------------		
 
+//devuelve una lista y es operacion con listas
+OPERACIONLISTA2::=dolar TIPOOPERACIONLISTA2 TIPOLISTA dolar;
 
-//devuenven una lista
-CONCA::= TIPOARRAY concatenar TIPOARRAY;
+TIPOOPERACIONLISTA2::=revers
+					|impr
+					|par
+					|asc
+					|desc;
+TIPOLISTA::=iden
+			|ARRAY
+			|OPERACIONLISTA2
+			|CONCA
+			|cadena;
 
-TIPOARRAY::=iden
-		|ARRAY
-		|cadena
-		|REVERS
-		|IMPR
-		|PAR
-		|ASC
-		|DESC;
+CONCA::=dolar TIPOLISTA concatenar TIPOLISTA dolar;
 
-REVERS::=dolar revers TIPOARRAY dolar;
-
-IMPR::=dolar impr TIPOARRAY dolar;
-
-PAR::=dolar par TIPOARRAY dolar;
-
-ASC::=dolar asc TIPOARRAY dolar;
-
-DESC::=dolar desc TIPOARRAY dolar;
-
+//-----------------------------------------------------
 //declaracion de listas
-LISTA::= let iden igual ARRAY
-		|let iden igual CONCA;
+LISTA::= dolar let iden igual TIPOLISTA dolar; 
 
 ARRAY::=corInicio VALORES corFin
 		|corInicio ARRAY2 corFin;
@@ -194,52 +172,76 @@ ARRAY::=corInicio VALORES corFin
 ARRAY2::=ARRAY2 coma ARRAY
 		|ARRAY;
 
-VALORES::=VALORES coma EXPL
-		|EXPL;
+VALORES::=VALORES coma TIPOVALOR
+		|TIPOVALOR;
+
+TIPOVALOR::=EXPL
+			|caracter;
+//------------fin declaracion listas		
+
 
 //acceso a listas
 ACCESO::=dolar iden INDICE dolar;		
 
 INDICE::=INDICE indice numero
 		|indice numero;
+//---------------fin acceso a listas
 
-
-SENTENCIAS::=SENTENCIAS SENTENCIA
+SENTENCIAS::=SENTENCIAS SALTOS SENTENCIA
 			|SENTENCIA;
 
 SENTENCIA::=CALCULAR
+			|LLAMADA 
+			|SI 
+			|SELECCIONAR
 			|LISTA
-			|CONCA
-			|SUCC
-			|DECC
-			|MIN
-			|MAX
-			|SUM
-			|PRODUCT
-			|LENGTH
 			|ACCESO
-			|REVERS
-			|IMPR
-			|PAR
-			|ASC
-			|DESC
-			|LLAMADA
-			|SI
-			|SELECCIONAR;
+			|SIMPLIFICADA
+			|OPERACIONLISTA
+			|OPERACIONLISTA2
+			|CONCA
+			|ans;
 
 //funcion
-FUNCION::=iden PARAMETROS igual SENTENCIAS end;
+FUNCION::=iden:id PARAMETROSTAR:par igual SENTENCIA:sent1 SALTOS SENTENCIAS:sent2 SALTOS end SALTOS{:
+		Nodo funcion=new Nodo("funcion",id,idright,idright);
+		funcion.add(par);
+		for(Nodo hijo : sent2.hijos){
+			sent1.hijos.add(hijo);
+		}
+		funcion.add(sent1);
+		RESULT=funcion;
+		:}
+		
+		|iden:id PARAMETROSTAR:par igual SENTENCIA:sent1 SALTOS end SALTOS {:
+			Nodo funcion=new Nodo("funcion",id,idright,idright);
+			funcion.add(par);
+			funcion.add(sent1);
+			RESULT=funcion;
+			:};
 
-PARAMETROS::=PARAMETROS coma iden
-			|iden;
+PARAMETROSTAR::=PARAMETROS:par {:RESULT=par;:}
+			|;
+
+PARAMETROS::=PARAMETROS:para coma iden:id {:RESULT=para;
+			Nodo par=new Nodo("id",id,idright,idleft);
+			RESULT.add(par);
+			:}
+			|iden:id {:RESULT=new Nodo("parametros",idright,idleft);
+			Nodo par=new Nodo("id",id,idright,idleft);
+			RESULT.add(par);
+			:};
 
 LLAMADA::=dolar iden llaveInicio VALORES llaveFin dolar;
 
-SI::=si EXPL then SENTENCIAS sino SENTENCIAS end;
+SI::=si EXPL then SALTOS SENTENCIAS SALTOS sino SALTOS SENTENCIAS SALTOS end;
 
-SELECCIONAR::= caso EXPA CASOS end;
+SELECCIONAR::= caso EXPA SALTOS CASOS  end;
 
 CASOS::=CASOS CASO
 		|CASO;
 
-CASO::=EXPA dosPuntos llaveInicio SENTENCIAS llaveFin;
+CASO::=VALORCASE dosPuntos SENTENCIAS puntoComa SALTOS;
+
+VALORCASE::=numero
+		|cadena;
