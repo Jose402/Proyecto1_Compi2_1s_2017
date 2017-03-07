@@ -1,10 +1,330 @@
-digraph lista{ rankdir=TB;node [shape = box, style=rounded]; nodo928088907[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
-"nodo928088907"-> "nodo1216531788"
-nodo1216531788[label="* ", color="cyan", style ="filled", shape="doublecircle"]; 
-"nodo1216531788"-> "nodo57957829"
-"nodo1216531788"-> "nodo1287139912"
-nodo57957829[label="2  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
-nodo1287139912[label="min ", color="cyan", style ="filled", shape="doublecircle"]; 
-"nodo1287139912"-> "nodo1357724753"
-nodo1357724753[label="l1  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
+digraph lista{ rankdir=TB;node [shape = box, style=rounded]; nodo920498477[label="ConjuntoFuncPolinomial  [funcion] ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo920498477"-> "nodo345709951"
+"nodo920498477"-> "nodo1403881322"
+nodo345709951[label="parametros ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo345709951"-> "nodo630549265"
+"nodo345709951"-> "nodo1957182557"
+nodo630549265[label="i  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1957182557[label="x  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1403881322[label="sentencias ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1403881322"-> "nodo1360214400"
+"nodo1403881322"-> "nodo1159998485"
+"nodo1403881322"-> "nodo1237989929"
+"nodo1403881322"-> "nodo2075164567"
+"nodo1403881322"-> "nodo8966642"
+"nodo1403881322"-> "nodo378496804"
+"nodo1403881322"-> "nodo549222414"
+"nodo1403881322"-> "nodo896397292"
+"nodo1403881322"-> "nodo1151502939"
+"nodo1403881322"-> "nodo187269009"
+"nodo1403881322"-> "nodo1366691408"
+"nodo1403881322"-> "nodo497405944"
+"nodo1403881322"-> "nodo1895346684"
+nodo1360214400[label="if ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1360214400"-> "nodo1466782037"
+"nodo1360214400"-> "nodo1240911946"
+"nodo1360214400"-> "nodo1793380405"
+nodo1466782037[label="condicion ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1466782037"-> "nodo1411481190"
+nodo1411481190[label="|| ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1411481190"-> "nodo1659995568"
+"nodo1411481190"-> "nodo1585453199"
+nodo1659995568[label="&& ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1659995568"-> "nodo734823617"
+"nodo1659995568"-> "nodo2077022"
+nodo734823617[label="> ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo734823617"-> "nodo548770402"
+"nodo734823617"-> "nodo1889366196"
+nodo548770402[label="x  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1889366196[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1889366196"-> "nodo1884451630"
+nodo1884451630[label="+ ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1884451630"-> "nodo889719454"
+"nodo1884451630"-> "nodo586229317"
+nodo889719454[label="2  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo586229317[label="2  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo2077022[label="> ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo2077022"-> "nodo101158383"
+"nodo2077022"-> "nodo1509378304"
+nodo101158383[label="y  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1509378304[label="z  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1585453199[label="== ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1585453199"-> "nodo2044316964"
+"nodo1585453199"-> "nodo1244345595"
+nodo2044316964[label="succ ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo2044316964"-> "nodo1520660679"
+nodo1520660679[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1520660679"-> "nodo541149006"
+nodo541149006[label="2  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1244345595[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1244345595"-> "nodo498098797"
+nodo498098797[label="3  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1240911946[label="sentencias ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1240911946"-> "nodo655225173"
+nodo655225173[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo655225173"-> "nodo73340795"
+nodo73340795[label="1  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1793380405[label="sentencias ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1793380405"-> "nodo2050763960"
+nodo2050763960[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo2050763960"-> "nodo77341370"
+nodo77341370[label="2  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1159998485[label="switch ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1159998485"-> "nodo648799155"
+"nodo1159998485"-> "nodo1592922266"
+nodo648799155[label="i  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1592922266[label="cases ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1592922266"-> "nodo1713381160"
+"nodo1592922266"-> "nodo1188933497"
+"nodo1592922266"-> "nodo69948744"
+nodo1713381160[label="case ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1713381160"-> "nodo954985499"
+"nodo1713381160"-> "nodo148504015"
+nodo954985499[label="1  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo148504015[label="sentencias ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo148504015"-> "nodo530982291"
+"nodo148504015"-> "nodo1424811552"
+nodo530982291[label="Polinomial1  [llamada] ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo530982291"-> "nodo217606767"
+nodo217606767[label="valorParametros ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo217606767"-> "nodo152282128"
+nodo152282128[label="x  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1424811552[label="if ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1424811552"-> "nodo1752701719"
+"nodo1424811552"-> "nodo624605334"
+"nodo1424811552"-> "nodo841782002"
+nodo1752701719[label="condicion ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1752701719"-> "nodo207841178"
+nodo207841178[label="== ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo207841178"-> "nodo1378268624"
+"nodo207841178"-> "nodo1802147026"
+nodo1378268624[label="decc ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1378268624"-> "nodo575708694"
+nodo575708694[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo575708694"-> "nodo1522190323"
+nodo1522190323[label="1  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1802147026[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1802147026"-> "nodo480071950"
+nodo480071950[label="0  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo624605334[label="sentencias ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo624605334"-> "nodo473201871"
+nodo473201871[label="concatenar ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo473201871"-> "nodo971901056"
+"nodo473201871"-> "nodo980429110"
+nodo971901056[label="\"hola\"  [cadena] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo980429110[label="\"entre al if\"  [cadena] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo841782002[label="sentencias ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo841782002"-> "nodo430028339"
+nodo430028339[label="concatenar ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo430028339"-> "nodo1203821418"
+"nodo430028339"-> "nodo1183133939"
+nodo1203821418[label="\"hola\"  [cadena] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1183133939[label="\"no entre al if\"  [cadena] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1188933497[label="case ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1188933497"-> "nodo1381025200"
+"nodo1188933497"-> "nodo887279624"
+nodo1381025200[label="2  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo887279624[label="sentencias ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo887279624"-> "nodo382195800"
+nodo382195800[label="Polinomial2  [llamada] ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo382195800"-> "nodo441222423"
+nodo441222423[label="valorParametros ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo441222423"-> "nodo364230270"
+nodo364230270[label="x  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo69948744[label="case ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo69948744"-> "nodo1289753940"
+"nodo69948744"-> "nodo194536762"
+nodo1289753940[label="3  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo194536762[label="sentencias ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo194536762"-> "nodo1109248200"
+nodo1109248200[label="Polinomial3  [llamada] ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1109248200"-> "nodo828957793"
+nodo828957793[label="valorParametros ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo828957793"-> "nodo1567208862"
+nodo1567208862[label="x  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1237989929[label="lista0  [lista] ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1237989929"-> "nodo1192413179"
+nodo1192413179[label="listaValores ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1192413179"-> "nodo570905649"
+"nodo1192413179"-> "nodo254307947"
+nodo570905649[label="valores ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo570905649"-> "nodo661207699"
+"nodo570905649"-> "nodo1837407515"
+"nodo570905649"-> "nodo493260745"
+nodo661207699[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo661207699"-> "nodo946463795"
+nodo946463795[label="1  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1837407515[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1837407515"-> "nodo805629236"
+nodo805629236[label="2  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo493260745[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo493260745"-> "nodo326175117"
+nodo326175117[label="3  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo254307947[label="valores ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo254307947"-> "nodo1646924275"
+"nodo254307947"-> "nodo939563742"
+"nodo254307947"-> "nodo800555403"
+nodo1646924275[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1646924275"-> "nodo949609766"
+nodo949609766[label="1  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo939563742[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo939563742"-> "nodo2140356305"
+nodo2140356305[label="2  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo800555403[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo800555403"-> "nodo469847238"
+nodo469847238[label="3  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo2075164567[label="lista1  [lista] ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo2075164567"-> "nodo425159047"
+nodo425159047[label="valores ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo425159047"-> "nodo970009360"
+"nodo425159047"-> "nodo1398949143"
+"nodo425159047"-> "nodo1487279045"
+nodo970009360[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo970009360"-> "nodo2136741882"
+nodo2136741882[label="1  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1398949143[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1398949143"-> "nodo1999265640"
+nodo1999265640[label="2  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1487279045[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1487279045"-> "nodo2128470518"
+nodo2128470518[label="3  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo8966642[label="min ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo8966642"-> "nodo421404300"
+nodo421404300[label="lista1  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo378496804[label="lista2  [lista] ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo378496804"-> "nodo141002294"
+nodo141002294[label="lista1  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo549222414[label="impr ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo549222414"-> "nodo1151092617"
+nodo1151092617[label="valores ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1151092617"-> "nodo1880921743"
+"nodo1151092617"-> "nodo1692450761"
+"nodo1151092617"-> "nodo1599035612"
+"nodo1151092617"-> "nodo1381172326"
+"nodo1151092617"-> "nodo1212542659"
+nodo1880921743[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1880921743"-> "nodo1732143430"
+nodo1732143430[label="1  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1692450761[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1692450761"-> "nodo846309278"
+nodo846309278[label="2  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1599035612[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1599035612"-> "nodo1135841265"
+nodo1135841265[label="3  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1381172326[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1381172326"-> "nodo1102002672"
+nodo1102002672[label="4  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1212542659[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1212542659"-> "nodo1459936576"
+nodo1459936576[label="5  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo896397292[label="lista3  [lista] ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo896397292"-> "nodo5882210"
+nodo5882210[label="impr ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo5882210"-> "nodo78055708"
+nodo78055708[label="valores ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo78055708"-> "nodo1917259686"
+"nodo78055708"-> "nodo391419367"
+"nodo78055708"-> "nodo842890408"
+"nodo78055708"-> "nodo1656951644"
+"nodo78055708"-> "nodo1965830059"
+nodo1917259686[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1917259686"-> "nodo669892518"
+nodo669892518[label="1  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo391419367[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo391419367"-> "nodo1774272452"
+nodo1774272452[label="2  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo842890408[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo842890408"-> "nodo239178522"
+nodo239178522[label="3  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1656951644[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1656951644"-> "nodo1931515717"
+nodo1931515717[label="4  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1965830059[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1965830059"-> "nodo1621847567"
+nodo1621847567[label="5  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1151502939[label="lista4  [lista] ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1151502939"-> "nodo382127198"
+nodo382127198[label="\"lista4\"  [cadena] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo187269009[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo187269009"-> "nodo1435712256"
+nodo1435712256[label="+ ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1435712256"-> "nodo889628900"
+"nodo1435712256"-> "nodo1211771886"
+nodo889628900[label="+ ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo889628900"-> "nodo1662663501"
+"nodo889628900"-> "nodo1328246543"
+nodo1662663501[label="max ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1662663501"-> "nodo747137636"
+nodo747137636[label="lista3  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1328246543[label="min ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1328246543"-> "nodo805364243"
+nodo805364243[label="lista1  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1211771886[label="3  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1366691408[label="lista5  [lista] ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1366691408"-> "nodo167405060"
+nodo167405060[label="concatenar ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo167405060"-> "nodo373265850"
+"nodo167405060"-> "nodo679408063"
+nodo373265850[label="revers ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo373265850"-> "nodo640763742"
+nodo640763742[label="concatenar ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo640763742"-> "nodo1833205736"
+"nodo640763742"-> "nodo740921443"
+nodo1833205736[label="lista1  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo740921443[label="valores ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo740921443"-> "nodo1718122258"
+"nodo740921443"-> "nodo1415672644"
+"nodo740921443"-> "nodo1238802595"
+nodo1718122258[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1718122258"-> "nodo701256500"
+nodo701256500[label="4  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1415672644[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1415672644"-> "nodo627740764"
+nodo627740764[label="5  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1238802595[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1238802595"-> "nodo1999346484"
+nodo1999346484[label="6  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo679408063[label="lista2  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo497405944[label="lita6  [lista] ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo497405944"-> "nodo1339731979"
+nodo1339731979[label="valores ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1339731979"-> "nodo509332258"
+"nodo1339731979"-> "nodo477443264"
+"nodo1339731979"-> "nodo1390032856"
+"nodo1339731979"-> "nodo1955098726"
+nodo509332258[label="'h'  [caracter] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo477443264[label="'o'  [caracter] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1390032856[label="'l'  [caracter] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1955098726[label="'a'  [caracter] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1895346684[label="concatenar ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1895346684"-> "nodo697005135"
+"nodo1895346684"-> "nodo42009560"
+nodo697005135[label="valores ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo697005135"-> "nodo1680038704"
+"nodo697005135"-> "nodo1295507372"
+"nodo697005135"-> "nodo255704271"
+nodo1680038704[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1680038704"-> "nodo506905050"
+nodo506905050[label="1  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1295507372[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1295507372"-> "nodo485547701"
+nodo485547701[label="2  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo255704271[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo255704271"-> "nodo162352107"
+nodo162352107[label="3  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo42009560[label="valores ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo42009560"-> "nodo1347630659"
+"nodo42009560"-> "nodo118460904"
+"nodo42009560"-> "nodo255072759"
+"nodo42009560"-> "nodo630501101"
+nodo1347630659[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1347630659"-> "nodo1147690209"
+nodo1147690209[label="4  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo118460904[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo118460904"-> "nodo531225309"
+nodo531225309[label="5  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo255072759[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo255072759"-> "nodo1214247784"
+nodo1214247784[label="6  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo630501101[label="x  [id] ", color="cyan", style ="filled", shape="doublecircle"]; 
 }

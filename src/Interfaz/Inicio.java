@@ -251,7 +251,7 @@ public class Inicio extends javax.swing.JFrame {
             //new Graficar(raiz);
 
             new SintacticoH(new LexicoH(new BufferedReader( new StringReader(cadena)))).parse();
-            //new Graficar(raiz);
+            new Graficar(raiz);
                     
 // TODO add your handling code here:
         } catch (Exception ex) {
