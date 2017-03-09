@@ -1,10 +1,13 @@
 
 package Interfaz;
 
-import Graphik.Analisis.*;
 import Haskell.Analisis.*;
 import Graphik.Ast.Graficar;
 import Graphik.Ast.Nodo;
+import Haskell.Interprete.Consola;
+import Haskell.Interprete.Lista;
+import Haskell.Interprete.Operaciones.*;
+import Haskell.Interprete.ResultadoH;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,6 +20,8 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Utilities;
 
 /**
  *
@@ -30,10 +35,11 @@ public class Inicio extends javax.swing.JFrame {
     public  int indicePestania=0;
     public  ArrayList<Editor> listaPestania;
     private Editor pestaniaActiva;
-    
+    Consola consola;
     public Inicio() {
         initComponents();
         listaPestania=new ArrayList<>();
+        consola=new Consola(txtConsola);
     }
     
     
@@ -80,6 +86,11 @@ public class Inicio extends javax.swing.JFrame {
         txtConsola.setBackground(new java.awt.Color(153, 153, 153));
         txtConsola.setColumns(20);
         txtConsola.setRows(5);
+        txtConsola.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtConsolaKeyPressed(evt);
+            }
+        });
         scrollPanel.setViewportView(txtConsola);
 
         btnCompilar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Media/ejecutar2.png"))); // NOI18N
@@ -249,9 +260,9 @@ public class Inicio extends javax.swing.JFrame {
         try { 
             //new Sintactico(new Lexico(new BufferedReader( new StringReader(cadena)))).parse();
             //new Graficar(raiz);
-
             new SintacticoH(new LexicoH(new BufferedReader( new StringReader(cadena)))).parse();
             new Graficar(raiz);
+
                     
 // TODO add your handling code here:
         } catch (Exception ex) {
@@ -259,6 +270,29 @@ public class Inicio extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnCompilarActionPerformed
 
+    private void txtConsolaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtConsolaKeyPressed
+        // TODO add your handling code here:
+        
+        if(evt.getKeyCode()==evt.VK_ENTER){
+            String cadena=getTextLine();
+            char c=cadena.charAt(0);
+            if(c!='>'){
+                try {
+                
+                new SintacticoH(new LexicoH(new BufferedReader( new StringReader(cadena)))).parse();
+                consola.ejecutar(raiz);
+                } catch (Exception ex) {
+                    System.out.println(ex+"");
+                }
+            }
+        }
+    }//GEN-LAST:event_txtConsolaKeyPressed
+
+    private String getTextLine(){
+        String cadena=txtConsola.getText();
+        String cadenas[]=cadena.split("\n");
+        return cadenas[cadenas.length-1];
+    }
     private void guardar(){
         if(pestaniaActiva!=null){
             if(pestaniaActiva.file!=null){

@@ -19,6 +19,10 @@ public class Nodo {
     public int columna;
     public ArrayList<Nodo> hijos;
     
+    public Nodo(){
+        
+    }
+    
     public Nodo(String etiqueta){
         this.etiqueta=etiqueta;
         hijos=new ArrayList<>();

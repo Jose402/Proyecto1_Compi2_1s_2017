@@ -89,10 +89,11 @@ EXPA::=EXPA:d1 mas:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1
     |EXPA:d1 menos:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
     |EXPA:d1 mul:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
     |EXPA:d1 div:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
-    |EXPA:d1 pot:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
-    |EXPA:d1 sqrt:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
-    |EXPA:d1 mod:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPA:d1 pot:op EXPA:d2 {:RESULT=new Nodo("^",opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPA:d1 sqrt:op EXPA:d2 {:RESULT=new Nodo("sqrt",opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
+    |EXPA:d1 mod:op EXPA:d2 {:RESULT=new Nodo("mod",opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
     |parenInicio EXPA:d1 parenFin {:RESULT=d1;:}
+    |menos:op EXPA:d1 {:RESULT=new Nodo("-",opright,opleft);RESULT.add(d1);:}
     |DATO:d1 {:RESULT=d1;:}  
     |VALOREXP:val {:RESULT=val;:} 
     |iden:id1 {:RESULT=new Nodo("id",id1,id1right,id1left);:};
@@ -122,7 +123,7 @@ SALTOS::=SALTOS salto
 		|salto;
 
 //devuelven un valor numerico
-CALCULAR::=dolar calcular:cal EXPL:exp dolar{:
+CALCULAR::=dolar calcular:cal EXPA:exp dolar{:
 		RESULT=new Nodo("calcular",calright,calleft);
 		RESULT.add(exp);
 		:};
@@ -168,6 +169,7 @@ TIPOOPERACIONLISTA2::=revers:cad {:RESULT=new Nodo("revers",cadright,cadleft);:}
 					|par:cad {:RESULT=new Nodo("par",cadright,cadleft);:}
 					|asc:cad {:RESULT=new Nodo("asc",cadright,cadleft);:}
 					|desc:cad {:RESULT=new Nodo("desc",cadright,cadleft);:};
+					
 TIPOLISTA::=iden:id {:RESULT=new Nodo("id",id,idright,idleft);:}
 			|ARRAY:val {:RESULT=val;:}
 			|OPERACIONLISTA2:val {:RESULT=val;:}

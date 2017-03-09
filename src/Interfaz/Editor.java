@@ -10,6 +10,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Utilities;
@@ -104,5 +106,20 @@ public class Editor extends JPanel {
         } catch (BadLocationException ex) {
             System.err.println(ex.getMessage());
         }
+    }
+    
+    public String getTextLine(){
+        try {
+            String cadena="";
+            int caretPos = txtArea.getCaretPosition();
+            int linea=txtArea.getLineOfOffset(caretPos);
+            int offset = Utilities.getRowStart(txtArea, caretPos);
+            int columna = caretPos - offset;
+            cadena=txtArea.getText(linea,columna);
+            return cadena;
+        } catch (BadLocationException ex) {
+            
+        }
+        return "";
     }
 }
