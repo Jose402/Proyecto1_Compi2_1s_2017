@@ -1,5 +1,5 @@
 package Haskell.Analisis;
-import Graphik.Ast.*;
+import Ast.*;
 import Interfaz.Inicio;
 
 import java_cup.runtime.*;
@@ -60,6 +60,7 @@ non terminal Nodo INDICE,ACCESO,SIMPLIFICADA,TIPOSIMPLIFICADA,VALOREXP;
 non terminal Nodo FUNCION,PARAMETROS,PARAMETROSTAR,LLAMADA,SI,CASO,CASOS,SELECCIONAR,VALORCASE;
 non terminal Nodo SALTOS,OPERACIONLISTA,TIPOOPERACIONLISTA,OPERACIONLISTA2,TIPOOPERACIONLISTA2;
 non terminal Nodo CONCA,TIPOLISTA,TIPOVALOR,VALORESSTAR,TIPOVALORPARA,VALORESPARA;
+non terminal Nodo FUNCIONES,SALTOSSTAR,VALORESSTAR1;
 
 /* Precedences */
 precedence left mas, menos;
@@ -76,13 +77,15 @@ precedence left concatenar;
 /* ­­­­­­­­­­­­­­ Declaración de la gramática  ­­­­­­­­­­­ */
 start with INICIO; // start with sirve para indicarle al parser con que produccion empezar
 
-INICIO::=FUNCION:funcion {:
-	RESULT=funcion;
-	Inicio.raiz=funcion;
+INICIO::=FUNCIONES:funciones SALTOSSTAR {:
+	Inicio.raiz=funciones;
 	:}
 	|SENTENCIA:val {:RESULT=val;
 	Inicio.raiz=val;
 	:};
+
+	SALTOSSTAR::=SALTOS
+				|;
 
 //expresiones artmeticas---falta llamada metodo,aumento y decremento
 EXPA::=EXPA:d1 mas:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
@@ -93,7 +96,7 @@ EXPA::=EXPA:d1 mas:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1
     |EXPA:d1 sqrt:op EXPA:d2 {:RESULT=new Nodo("sqrt",opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
     |EXPA:d1 mod:op EXPA:d2 {:RESULT=new Nodo("mod",opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
     |parenInicio EXPA:d1 parenFin {:RESULT=d1;:}
-    |menos:op EXPA:d1 {:RESULT=new Nodo("-",opright,opleft);RESULT.add(d1);:}
+    |menos:op EXPA:d1 {:RESULT=new Nodo("unitario",opright,opleft);RESULT.add(d1);:}
     |DATO:d1 {:RESULT=d1;:}  
     |VALOREXP:val {:RESULT=val;:} 
     |iden:id1 {:RESULT=new Nodo("id",id1,id1right,id1left);:};
@@ -139,7 +142,8 @@ TIPOSIMPLIFICADA::=succ:tipo {:RESULT=new Nodo("succ",tiporight,tipoleft);:}
 VALOREXP::=SIMPLIFICADA:val {:RESULT=val;:} //decc,succ
 		|ACCESO:val {:RESULT=val;:} //indice matriz o vector
 		|CALCULAR:val {:RESULT=val;:} //calcular
-		|OPERACIONLISTA:val {:RESULT=val;:}; //min,max,sum,product,length
+		|OPERACIONLISTA:val {:RESULT=val;:} //min,max,sum,product,length
+		|LLAMADA:val {:RESULT=val;:};
 
 //devuelve un valor y es operacion con listas
 
@@ -200,6 +204,9 @@ ARRAY2::=ARRAY2:lista coma ARRAY:val {:RESULT=lista;
 		RESULT.add(val);
 		:};
 
+VALORESSTAR1::=VALORES:val {:RESULT=val;:}
+			|;
+
 VALORES::=VALORES:lista coma TIPOVALOR:val {:RESULT=lista;
 		RESULT.add(val);
 		:}
@@ -215,19 +222,21 @@ TIPOVALOR::=CALCULAR:val {:RESULT=val;:}
 
 
 //acceso a listas
-ACCESO::=dolar iden:id INDICE:indice dolar {:
-	RESULT=new Nodo("acceso",id,idright,idleft);
+ACCESO::=dolar TIPOLISTA:val INDICE:indice dolar {:
+	RESULT=new Nodo("acceso",valright,valleft);
+	RESULT.add(val);
 	RESULT.add(indice);
-	:};		
+	:}
+	;		
 
-INDICE::=INDICE:lista indice numero:num {:RESULT=lista;
-		Nodo indice=new Nodo("numero",num,numright,numleft);
-		RESULT.add(indice);
+INDICE::=INDICE:lista indice VALOREXP:exp {:RESULT=lista;
+		//Nodo indice=new Nodo("numero",num,numright,numleft);
+		RESULT.add(exp);
 		:}
-		|indice:ind numero:num {:
-		Nodo indice=new Nodo("numero",num,numright,numleft);
+		|indice:ind VALOREXP:exp {:
+		//Nodo indice=new Nodo("numero",num,numright,numleft);
 		RESULT=new Nodo("indices",indright,indleft);
-		RESULT.add(indice);
+		RESULT.add(exp);
 		:};
 //---------------fin acceso a listas
 
@@ -251,12 +260,22 @@ SENTENCIA::=CALCULAR:sent {:RESULT=sent;:}
 			|ans:ans {:RESULT=new Nodo("ans",ans,ansright,ansleft);:};
 
 //funcion
-FUNCION::=iden:id PARAMETROSTAR:par igual SENTENCIAS:sent1 SALTOS end SALTOS{:
+FUNCION::=iden:id PARAMETROSTAR:par igual SENTENCIAS:sent1 SALTOS end {:
 		Nodo funcion=new Nodo("funcion",id,idright,idright);
 		funcion.add(par);
 		funcion.add(sent1);
 		RESULT=funcion;
 		:};
+
+
+FUNCIONES::=FUNCIONES:lista SALTOS FUNCION:funcion {:RESULT=lista;
+			RESULT.add(funcion);
+			:}
+			|FUNCION:funcion {:
+			RESULT=new Nodo("funciones",funcion.linea-1,funcion.columna-1);
+			RESULT.add(funcion);
+			:};
+
 
 PARAMETROSTAR::=PARAMETROS:par {:RESULT=par;:}
 			|;
@@ -301,7 +320,7 @@ SI::=si:si EXPL:exp then SALTOS SENTENCIAS:sent SALTOS sino SALTOS SENTENCIAS:se
 	RESULT=sentSi;
 	:};
 
-SELECCIONAR::= caso:caso EXPA:exp SALTOS CASOS:casos  end {:
+SELECCIONAR::= caso:caso EXPC:exp SALTOS CASOS:casos  end {:
 	RESULT=new Nodo("switch",casoright,casoleft);
 	RESULT.add(exp);
 	RESULT.add(casos);

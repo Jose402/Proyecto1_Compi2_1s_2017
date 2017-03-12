@@ -5,7 +5,7 @@
  */
 package Haskell.Interprete;
 
-import Graphik.Ast.Nodo;
+import Ast.Nodo;
 import java.util.ArrayList;
 
 /**
@@ -16,16 +16,17 @@ public class ResultadoH {
     
     public String tipo;
     public String valor;
-    public ArrayList<Nodo> lista;
+    public Lista lista;
     
     public ResultadoH(String tipo,String valor){
         this.valor=valor;
         this.tipo=tipo;        
     }
     
-    public ResultadoH(String tipo,ArrayList<Nodo> lista){
+    public ResultadoH(String tipo,Lista lista){
         this.tipo=tipo;
         this.lista=lista;
+        this.valor=lista.getString();
     }
     
 }

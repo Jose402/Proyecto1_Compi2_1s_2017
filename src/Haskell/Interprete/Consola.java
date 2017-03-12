@@ -5,9 +5,10 @@
  */
 package Haskell.Interprete;
 
-import Graphik.Ast.Nodo;
+import Ast.Nodo;
 import Haskell.Interprete.Operaciones.OperacionNativa;
-import static Interfaz.Inicio.raiz;
+import Haskell.Interprete.Sentencias.Declaracion;
+import Interfaz.Inicio;
 import java.util.ArrayList;
 import javax.swing.JTextArea;
 
@@ -22,7 +23,6 @@ public class Consola {
     private OperacionNativa opN;
     public Consola(JTextArea txtConsola){
         tabla=new TablaSimboloH();
-        opN=new OperacionNativa(tabla);
         this.txtConsola=txtConsola;
     }
     
@@ -30,16 +30,37 @@ public class Consola {
     public Lista ejecutar(Nodo raiz){
         switch(raiz.etiqueta){
             case "declaracionLista":
-                declaracion(raiz);
+                Declaracion declara=new Declaracion(tabla);
+                SimboloH sim=declara.declarar(raiz);
+                if(sim!=null){
+                 txtConsola.append("\n");
+                 txtConsola.append(">"+sim.lista.getString());
+                }
                 break; 
+            case "llamada":
+                    FuncionH funcionActual=Inicio.interprete.llamada(raiz);
+                    txtConsola.append("\n");
+                    txtConsola.append(">"+funcionActual.retorno.valor);
+                    break;
             case "acceso":
-                String id=raiz.valor;
-                SimboloH s=tabla.getSimbolo(id);
+                SimboloH s=null;
+                if(raiz.hijos.get(0).etiqueta.equals("id")){
+                    String id=raiz.hijos.get(0).valor;
+                    s=tabla.getSimbolo(id);
+                }else{
+                    opN=new OperacionNativa(tabla);
+                    Lista lista=opN.operacionLista(raiz.hijos.get(0));
+                    s=new SimboloH("", lista);
+                }
+                
                 if(s!=null){
-                    Nodo valores=raiz.hijos.get(0);
+                    Nodo valores=raiz.hijos.get(1);
                     ArrayList<Integer> index=new ArrayList<>();
                     for(Nodo nodo:valores.hijos){
-                        index.add(Integer.parseInt(nodo.valor));
+                        opN=new OperacionNativa(tabla);
+                        ResultadoH r=opN.operar(nodo);
+                        Double d=Double.parseDouble(r.valor);
+                        index.add(d.intValue());
                     }
                     ResultadoH acceso=s.lista.getValor(index);
                     txtConsola.append("\n");
@@ -48,7 +69,8 @@ public class Consola {
                     System.out.println("Error semantico,la lista no existe");
                 }
                 break;
-            default:             
+            default:          
+                opN=new OperacionNativa(tabla);
                 ResultadoH r=opN.imprimirConsola(raiz);
                 txtConsola.append("\n");
                 txtConsola.append(">"+r.valor);
@@ -56,13 +78,6 @@ public class Consola {
         return null;
     }
     
-    private void declaracion(Nodo raiz){
-        Lista lista=opN.concatenar(raiz.hijos.get(0));
-        String nombre=raiz.valor;
-        SimboloH simbolo=new SimboloH(nombre,lista);
-        if(!tabla.setSimbolo(simbolo)){
-           System.out.println("Error semantico,El simbolo ya existe!!!");
-        }
-    }
+    
     
 }

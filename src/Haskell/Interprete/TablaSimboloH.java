@@ -13,16 +13,17 @@ import java.util.*;
  */
 public class TablaSimboloH {
     private Hashtable<String,SimboloH> tabla;
-    
     public TablaSimboloH(){
             tabla=new Hashtable<>();
     }
     
     public Boolean existe(String nombre){
+        nombre=nombre.toLowerCase();
         return tabla.containsKey(nombre);
     }
-    
+
     public Boolean setSimbolo(SimboloH simbolo){
+        simbolo.nombre=simbolo.nombre.toLowerCase();
         if(!existe(simbolo.nombre)){
             //si el simbolo se ingreso correctamente
             tabla.put(simbolo.nombre,simbolo);
@@ -34,10 +35,17 @@ public class TablaSimboloH {
     }
     
     public SimboloH getSimbolo(String nombre){
+        nombre=nombre.toLowerCase();
         if(existe(nombre)){
             return tabla.get(nombre);
         }else{
             return null;
+        }
+    }
+    
+    public void cambiarAmbito(TablaSimboloH actual){
+        for(SimboloH simbolo:actual.tabla.values()){
+            tabla.put(simbolo.nombre,simbolo);
         }
     }
 }

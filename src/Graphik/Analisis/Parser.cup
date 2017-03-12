@@ -1,5 +1,5 @@
 package Graphik.Analisis;
-import Graphik.Ast.*;
+import Ast.*;
 import Interfaz.Inicio;
 
 import java_cup.runtime.*;

@@ -2,11 +2,10 @@
 package Interfaz;
 
 import Haskell.Analisis.*;
-import Graphik.Ast.Graficar;
-import Graphik.Ast.Nodo;
+import Ast.Graficar;
+import Ast.Nodo;
 import Haskell.Interprete.Consola;
-import Haskell.Interprete.Lista;
-import Haskell.Interprete.Operaciones.*;
+import Haskell.Interprete.Interprete;
 import Haskell.Interprete.ResultadoH;
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,10 +35,12 @@ public class Inicio extends javax.swing.JFrame {
     public  ArrayList<Editor> listaPestania;
     private Editor pestaniaActiva;
     Consola consola;
+    public static Interprete interprete;
     public Inicio() {
         initComponents();
         listaPestania=new ArrayList<>();
         consola=new Consola(txtConsola);
+        
     }
     
     
@@ -76,6 +77,7 @@ public class Inicio extends javax.swing.JFrame {
         itemGuardarComo = new javax.swing.JMenuItem();
         itemSalir = new javax.swing.JMenuItem();
         menuEditar = new javax.swing.JMenu();
+        itemCargarFunciones = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -209,7 +211,16 @@ public class Inicio extends javax.swing.JFrame {
 
         menuBar.add(menuArchivo);
 
-        menuEditar.setText("Editar");
+        menuEditar.setText("Haskell++");
+
+        itemCargarFunciones.setText("Cargar Funciones");
+        itemCargarFunciones.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemCargarFuncionesActionPerformed(evt);
+            }
+        });
+        menuEditar.add(itemCargarFunciones);
+
         menuBar.add(menuEditar);
 
         setJMenuBar(menuBar);
@@ -261,8 +272,16 @@ public class Inicio extends javax.swing.JFrame {
             //new Sintactico(new Lexico(new BufferedReader( new StringReader(cadena)))).parse();
             //new Graficar(raiz);
             new SintacticoH(new LexicoH(new BufferedReader( new StringReader(cadena)))).parse();
-            new Graficar(raiz);
+            //new Graficar(raiz);
 
+            interprete=new Interprete(raiz);
+            ArrayList<ResultadoH> l=new ArrayList<>();
+            ResultadoH r1=new ResultadoH("numero","1");
+            l.add(r1);
+            //r1=new ResultadoH("numero","3");
+            //l.add(r1);
+            ResultadoH r3=interprete.ejecutar("switch", l);
+            txtConsola.append(">"+r3.valor+"\n");
                     
 // TODO add your handling code here:
         } catch (Exception ex) {
@@ -287,6 +306,18 @@ public class Inicio extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_txtConsolaKeyPressed
+
+    private void itemCargarFuncionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemCargarFuncionesActionPerformed
+        try {
+            // TODO add your handling code here:
+            String cadena=pestaniaActiva.getText();
+            new SintacticoH(new LexicoH(new BufferedReader( new StringReader(cadena)))).parse();
+            interprete=new Interprete(raiz);
+            
+        } catch (Exception ex) {
+            Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_itemCargarFuncionesActionPerformed
 
     private String getTextLine(){
         String cadena=txtConsola.getText();
@@ -440,6 +471,7 @@ public class Inicio extends javax.swing.JFrame {
     private javax.swing.JButton btnTablaError;
     private javax.swing.JButton btnTablaSimoblos;
     private javax.swing.JMenuItem itemAbrir;
+    private javax.swing.JMenuItem itemCargarFunciones;
     private javax.swing.JMenuItem itemGuardar;
     private javax.swing.JMenuItem itemGuardarComo;
     private javax.swing.JMenuItem itemNuevo;

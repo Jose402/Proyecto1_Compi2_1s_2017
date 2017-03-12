@@ -5,7 +5,7 @@
  */
 package Haskell.Interprete.Operaciones;
 
-import Graphik.Ast.Nodo;
+import Ast.Nodo;
 import Haskell.Interprete.Lista;
 import Haskell.Interprete.ResultadoH;
 import Haskell.Interprete.SimboloH;
@@ -13,7 +13,6 @@ import Haskell.Interprete.TablaSimboloH;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import javax.swing.text.TabableView;
 
 /**
  *
@@ -25,7 +24,7 @@ public class OperacionNativa {
     Lista lista;
     TablaSimboloH tabla;    
     public OperacionNativa(TablaSimboloH tabla){
-        opA=new OperacionAritmetica(tabla);
+        
         this.tabla=tabla;
     }
     
@@ -37,7 +36,7 @@ public class OperacionNativa {
             case "par":
             case "desc":
             case "asc":
-                Lista l=concatenar(raiz);
+                Lista l=operacionLista(raiz);
                 return new ResultadoH(l.tipo,l.getString());
             default:
                 return  operar(raiz);
@@ -55,21 +54,27 @@ public class OperacionNativa {
             case "decc":
                 return decc(raiz);
             case "min":
-                lista=concatenar(raiz.hijos.get(0));
+                lista=operacionLista(raiz.hijos.get(0));
                 return min(lista);
             case "max":
-                lista=concatenar(raiz.hijos.get(0));
+                lista=operacionLista(raiz.hijos.get(0));
                 return max(lista);
             case "product":
-                lista=concatenar(raiz.hijos.get(0));
+                lista=operacionLista(raiz.hijos.get(0));
                 return product(lista);
             case "sum":
-                lista=concatenar(raiz.hijos.get(0));
+                lista=operacionLista(raiz.hijos.get(0));
                 return sum(lista);
             case "length":
-                lista=concatenar(raiz.hijos.get(0));
+                lista=operacionLista(raiz.hijos.get(0));
                 return length(lista);
             case "caracter":
+                opA=new OperacionAritmetica(tabla);
+                return opA.resolver(raiz);
+            case "id":
+            case "numero":
+            case "cadena":
+                opA=new OperacionAritmetica(tabla);
                 return opA.resolver(raiz);
         }
         return null;
@@ -78,11 +83,11 @@ public class OperacionNativa {
     public Lista operar(String tipo,Lista lista){
         switch(tipo){
             case "revers":
-                break;
+                return revers(lista);
             case "impr":
-                break;
+                return impar(lista);
             case "par":
-                break;
+                return par(lista);
             case "asc":
                 return asc(lista);
             case "desc":
@@ -92,6 +97,7 @@ public class OperacionNativa {
     }
     
     private ResultadoH calcular(Nodo raiz){
+        opA=new OperacionAritmetica(tabla);
         return opA.resolver(raiz.hijos.get(0));
     }
     
@@ -142,23 +148,79 @@ public class OperacionNativa {
     
     
     private Lista desc(Lista lista){
+        Lista clon=new Lista();
+        clon.tipo=lista.tipo;
+        clon.indices=(ArrayList<Integer>) lista.indices.clone();
+        clon.valores=(ArrayList) lista.valores.clone();
         Comparator<Integer> comparador = Collections.reverseOrder();
-        Collections.sort(lista.valores, comparador);
-        return lista;
+        Collections.sort(clon.valores, comparador);
+        return clon;
     }
     
     private Lista asc(Lista lista){
-        Collections.sort(lista.valores);
-        return lista;
+        Lista clon=new Lista();
+        clon.tipo=lista.tipo;
+        clon.indices=(ArrayList<Integer>) lista.indices.clone();
+        clon.valores=(ArrayList) lista.valores.clone();
+        Collections.sort(clon.valores);
+        return clon;
+    }
+    
+    private Lista revers(Lista lista){
+        ArrayList revers=new ArrayList();
+        for(int i=lista.valores.size()-1;i>=0;i--){
+            revers.add(lista.valores.get(i));
+        }
+        Lista clon=new Lista();
+        clon.tipo=lista.tipo;
+        clon.indices=(ArrayList<Integer>) lista.indices.clone();
+        clon.valores=revers;
+        return clon;
+    }
+    
+    private Lista par(Lista lista){
+        Lista clon=new Lista();
+        clon.tipo=lista.tipo;
+        if(lista.tipo.equals("numero")){
+            for(int i=0;i<lista.valores.size();i++){
+                Double num=(Double) lista.valores.get(i);
+                if((num%2)==0){
+                    clon.valores.add(num);
+                }
+            }
+            clon.indices.add(clon.valores.size());
+            return clon;
+        }else{
+            //error semantico, la lista no es de tipo numero
+            return null;
+        }
+    }
+
+    private Lista impar(Lista lista){
+        Lista clon=new Lista();
+        clon.tipo=lista.tipo;
+        if(lista.tipo.equals("numero")){
+            for(int i=0;i<lista.valores.size();i++){
+                Double num=(Double) lista.valores.get(i);
+                if(!((num%2)==0)){
+                    clon.valores.add(num);
+                }
+            }
+            clon.indices.add(clon.valores.size());
+            return clon;
+        }else{
+            //error semantico, la lista no es de tipo numero
+            return null;
+        }
     }
     
     //devuelve una lista
-    public Lista concatenar(Nodo raiz){
+    public Lista operacionLista(Nodo raiz){
         Lista lista1=null;
         Lista lista2=null;
         if(raiz.etiqueta.equals("concatenar")){
-            lista1=concatenar(raiz.hijos.get(0));
-            lista2=concatenar(raiz.hijos.get(1));
+            lista1=operacionLista(raiz.hijos.get(0));
+            lista2=operacionLista(raiz.hijos.get(1));
         }else if(raiz.etiqueta.equals("valores")||raiz.etiqueta.equals("listaValores")||raiz.etiqueta.equals("cadena")){
             Lista l1=new Lista(raiz,tabla);
             l1=operar(raiz.etiqueta,l1);
@@ -173,7 +235,7 @@ public class OperacionNativa {
                 System.out.println("Error semantico,la lista no existe!!!");
             }
         }else{
-            Lista l=concatenar(raiz.hijos.get(0));
+            Lista l=operacionLista(raiz.hijos.get(0));
             return operar(raiz.etiqueta,l);
         }
         

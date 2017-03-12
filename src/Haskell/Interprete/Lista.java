@@ -5,7 +5,7 @@
  */
 package Haskell.Interprete;
 
-import Graphik.Ast.Nodo;
+import Ast.Nodo;
 import Haskell.Interprete.Operaciones.OperacionNativa;
 import java.util.ArrayList;
 
@@ -20,11 +20,15 @@ public class Lista extends Nodo{
     public String tipo;
     private OperacionNativa opN;
     private TablaSimboloH tabla;
+    
+    public Lista(){
+        indices=new ArrayList();
+        valores=new ArrayList();
+    }
     public Lista(Nodo raiz,TablaSimboloH tabla){
         indices=new ArrayList<>();
         valores=new ArrayList<>();
         this.tabla=tabla;
-        opN=new OperacionNativa(tabla);
         linealizar(raiz);
     }
     
@@ -39,9 +43,11 @@ public class Lista extends Nodo{
             String tipo1="-1";
             String tipo2="-2";
             for(Nodo hijo:hijo1.hijos){
+                opN=new OperacionNativa(tabla);
                 ResultadoH r=opN.operar(hijo);
                 tipo1=r.tipo;
                 if(tipo1.equals("numero")){
+                    tipo="numero";
                     Double d=Double.parseDouble(r.valor);
                     valores.add(d);
                 }else{
@@ -52,9 +58,11 @@ public class Lista extends Nodo{
                 }
             }
             for(Nodo hijo:hijo2.hijos){
+                opN=new OperacionNativa(tabla);
                 ResultadoH r=opN.operar(hijo);
                 tipo2=r.tipo;
                 if(tipo1.equals("numero")){
+                    tipo="numero";
                     Double d=Double.parseDouble(r.valor);
                     valores.add(d);
                 }else{
@@ -72,6 +80,7 @@ public class Lista extends Nodo{
             //si es de 1 dimension
             indices.add(raiz.hijos.size());
             for(Nodo hijo:raiz.hijos){
+                opN=new OperacionNativa(tabla);
                 ResultadoH r=opN.operar(hijo);
                 tipo=r.tipo;
                 if(tipo.equals("numero")){
@@ -87,6 +96,7 @@ public class Lista extends Nodo{
         }else if(raiz.etiqueta.equals("cadena")){
             String cad=raiz.valor;
             tipo="cadena";
+            valor=raiz.valor;
             cad=cad.replace("\"","");
             indices.add(cad.length());
             for(int i=0;i<cad.length();i++){
@@ -100,6 +110,13 @@ public class Lista extends Nodo{
     
     public String getString(){
         String valor="";
+        if(valores.isEmpty()){
+            if(indices.size()==1){
+                return "[]";
+            }else{
+                return "[[],[]]";
+            }
+        }
         if(tipo.equals("numero")||tipo.equals("caracter")){
             if(indices.size()==1){
                 valor+="[";
@@ -113,15 +130,16 @@ public class Lista extends Nodo{
                 valor+="]";
             }else{
                 valor=valor+"[[";
-                for(int i=0;i<indices.get(0);i++){
-                    if((valores.size()-1)==i){
-                        valor+=valores.get(i);
+                int j=0;
+                for(j=0;j<indices.get(0);j++){
+                    if((valores.size()-1)==j){
+                        valor+=valores.get(j);
                     }else{
-                        valor+=valores.get(i)+",";
+                        valor+=valores.get(j)+",";
                     }
                 }
-                valor+="],";
-                for(int i=0;i<indices.get(1);i++){
+                valor+="],[";
+                for(int i=j;i<valores.size();i++){
                     if((valores.size()-1)==i){
                         valor+=valores.get(i);
                     }else{
