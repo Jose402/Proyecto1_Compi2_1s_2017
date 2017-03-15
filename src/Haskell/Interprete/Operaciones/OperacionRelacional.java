@@ -72,7 +72,11 @@ public class OperacionRelacional {
             case 0://si es lista
                 switch(raiz.etiqueta){
                     case "==":
-                        break;
+                        if(str1.equalsIgnoreCase(str2)){
+                            return new ResultadoH("bool","true");
+                        }else{
+                            return new ResultadoH("bool","false");
+                        }
                     case ">":
                         break;
                     case ">=":

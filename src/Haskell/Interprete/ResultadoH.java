@@ -18,6 +18,10 @@ public class ResultadoH {
     public String valor;
     public Lista lista;
     
+    public ResultadoH(){
+        
+    }
+    
     public ResultadoH(String tipo,String valor){
         this.valor=valor;
         this.tipo=tipo;        

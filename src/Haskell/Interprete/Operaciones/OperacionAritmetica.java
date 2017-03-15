@@ -80,9 +80,12 @@ public class OperacionAritmetica {
                 }else{
                     System.out.println("Error semantico, la varibale no existe!!!");
                 }
-            case "cadena":
             case "numero":
-                return  new ResultadoH(raiz.etiqueta,raiz.valor);
+                return new ResultadoH(raiz.etiqueta,raiz.valor);
+            case "cadena":
+            case "caracter":
+                Lista l1=new Lista(raiz,tabla);
+                return  new ResultadoH(raiz.etiqueta,l1);
             case "llamada":
                 FuncionH funcion=Inicio.interprete.llamada(raiz);
                 if(funcion.retorno!=null){
@@ -95,75 +98,7 @@ public class OperacionAritmetica {
                 ResultadoH r=opN.operar(raiz);
                 return new ResultadoH(r.tipo,r.valor);
         }
-        
-        /*
-        if(raiz.valor!=null&&!(raiz.etiqueta.equals("acceso")||raiz.etiqueta.equals("id")||raiz.etiqueta.equals("llamada"))){
-            return new ResultadoH(raiz.etiqueta,raiz.valor);
-        }else if(raiz.hijos.size()==2){
-            if(raiz.etiqueta.equals("acceso")){
-                SimboloH s=null;
-                if(raiz.hijos.get(0).etiqueta.equals("id")){
-                    String id=raiz.hijos.get(0).valor;
-                    s=tabla.getSimbolo(id);
-                }else{
-                    opN=new OperacionNativa(tabla);
-                    Lista lista=opN.operacionLista(raiz.hijos.get(0));
-                    s=new SimboloH("", lista);
-                }
-                if(s!=null){
-                    Nodo valores=raiz.hijos.get(1);
-                    ArrayList<Integer> index=new ArrayList<>();
-                    for(Nodo nodo:valores.hijos){
-                        opN=new OperacionNativa(tabla);
-                        ResultadoH r=opN.operar(nodo);
-                        Double d=Double.parseDouble(r.valor);
-                        index.add(d.intValue());
-                    }
-                    ResultadoH acceso=s.lista.getValor(index);
-                    return acceso;
-                }else{
-                    System.out.println("Error semantico,la lista no existe");
-                }
-            }else{
-                resultado1=resolver(raiz.hijos.get(0));
-                resultado2=resolver(raiz.hijos.get(1));
-            }
-        }else if(raiz.hijos.isEmpty()){
-            if(raiz.etiqueta.equals("id")){
-                if(tabla.existe(raiz.valor)){
-                SimboloH variable=tabla.getSimbolo(raiz.valor);
-                if(variable.lista!=null){
-                    return new ResultadoH(variable.tipo,variable.lista);
-                }else{
-                    return new ResultadoH(variable.tipo,variable.valor);
-                }
-                }else{
-                    System.out.println("Error semantico, la varibale no existe!!!");
-                }
-            }
-        }
-        else if(raiz.hijos.size()==1){
-            if(raiz.etiqueta.equals("-")){
-                resultado1=resolver(raiz.hijos.get(0));
-                Double negativo=Double.parseDouble(resultado1.valor)*-1;
-                return new ResultadoH(resultado1.tipo,negativo+"");
-            }else if(raiz.etiqueta.equals("cadena")||raiz.etiqueta.equals("numero")){
-                return  new ResultadoH(raiz.etiqueta,raiz.valor);
-            }else if(raiz.etiqueta.equals("llamada")){
-                FuncionH funcion=Inicio.interprete.llamada(raiz);
-                if(funcion.retorno!=null){
-                    return new ResultadoH(funcion.tipo,funcion.retorno.valor);
-                }else{
-                    return new ResultadoH("-1","0");
-                }
-            }
-            else{
-                OperacionNativa opN=new OperacionNativa(tabla);
-                ResultadoH r=opN.operar(raiz);
-                return new ResultadoH(r.tipo,r.valor);
-            }
-        }
-        */
+
         Boolean estado=false;
         Double valor1=0.0;
         Double valor2=0.0;
@@ -189,7 +124,7 @@ public class OperacionAritmetica {
                 case "mod":
                     return new ResultadoH(resultado1.tipo,(valor1%valor2)+"");
                 case "sqrt"://aun falta implementarla
-                    break;
+                    return new ResultadoH(resultado1.tipo,(Math.pow(valor2,1/valor1))+"");
             }
         }else{
             System.out.println("Error semantico,los tipos de datos son diferentes");

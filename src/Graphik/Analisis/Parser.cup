@@ -58,11 +58,16 @@ terminal String iden;
 /*
 * Aquí están los no terminales
 */
-non terminal Nodo INICIO,ENCABEZADO,IMPORTACION,IMPORTACIONES,LLAMADAHASKELS,LLAMADAHASKEL,ALS;
-non terminal Nodo ATRIBUTOVAR,ATRIBUTOALS,LISTAID,CUERPO,CUERPOS,METODO,CUERPOALS;
-non terminal Nodo EXPA,EXPL,EXPR,VISIBILIDAD,TIPODATO,TIPOMETODO,DATO;
-non terminal Nodo LLAMADAMETODO,VALORPARAMETROS,SENTENCIAS,SENTENCIA;
-non terminal Nodo DECLARACION,ASIGNACION;
+non terminal Nodo INICIO,CLASESALS,IMPORTACION,IMPORTACIONES,INCLUIRHASKELS,INCLUIRHASKEL,ALS;
+non terminal Nodo ATRIBUTOVAR,ATRIBUTOALS,LISTAID,LISTAID2,CUERPO,CUERPOS,METODO,CUERPOALS;
+non terminal Nodo EXPA,EXPL,EXPR,VISIBILIDAD,TIPODATO,TIPODATO2,TIPOMETODO,DATO;
+non terminal Nodo LLAMADAMETODO,VALORPARAMETROS,SENTENCIAS,SENTENCIAS1,SENTENCIA;
+non terminal Nodo DECLARACION,ASIGNACION,PARAMETRO,PARAMETROS,PARAMETROSSTAR;
+non terminal Nodo INDICES,ARREGLO,ARREGLOS,LISTAEXP,ATRIBUTOVARAR,INDICES2;
+non terminal Nodo ACCESOVAR,ACCESOAR,IMPRIMIR;
+non terminal Nodo SI,SELECCION,PARA,MIENTRAS,HACERMIENTRAS,CONTINUAR,RETORNO,TERMINAR;
+non terminal Nodo CASO,CASOS,DEFECTO,SIMPLIFICADA,VARIABLEPARA;
+non terminal Nodo GRAFICARFUNCION;
 
 /* Precedences */
 precedence left mas, menos;
@@ -77,16 +82,17 @@ precedence right not;
 /* ­­­­­­­­­­­­­­ Declaración de la gramática  ­­­­­­­­­­­ */
 start with INICIO; // start with sirve para indicarle al parser con que produccion empezar
 
-INICIO::=IMPORTACIONES:importar LLAMADAHASKELS:incluir ALS:als {:
+INICIO::=IMPORTACIONES:importar INCLUIRHASKELS:incluir CLASESALS:clasesAls {:
         RESULT=new Nodo("encabezado",importar.linea-1,importar.columna-1);
         RESULT.add(importar);
         RESULT.add(incluir);
-        RESULT.add(als);
+        RESULT.add(clasesAls);
         Inicio.raiz=RESULT;
-    :};
+    :}
+    |EXPL:exp {:Inicio.raiz=exp;:};
 
 IMPORTACIONES::=IMPORTACION:nodo {:RESULT=nodo;:}
-            |;
+            |{:RESULT=new Nodo("importaciones",0,0);:};
 
 IMPORTACION::= IMPORTACION:nodo importar idenImportar:id inteFin {:RESULT=nodo;
                 Nodo importar=new Nodo("importar",id,idright,idleft);
@@ -97,10 +103,10 @@ IMPORTACION::= IMPORTACION:nodo importar idenImportar:id inteFin {:RESULT=nodo;
                 RESULT.add(importar);
                 :};
 
-LLAMADAHASKELS::=LLAMADAHASKEL:nodo {:RESULT=nodo;:}
-            |;
+INCLUIRHASKELS::=INCLUIRHASKEL:nodo {:RESULT=nodo;:}
+            |{:RESULT=new Nodo("incluidos",0,0);:};
 
-LLAMADAHASKEL::= LLAMADAHASKEL:nodo incluir_HK iden:id inteFin{:RESULT=nodo;
+INCLUIRHASKEL::= INCLUIRHASKEL:nodo incluir_HK iden:id inteFin{:RESULT=nodo;
                 Nodo importar=new Nodo("incluir",id,idright,idleft);
                 RESULT.add(importar);
                 :}
@@ -110,13 +116,24 @@ LLAMADAHASKEL::= LLAMADAHASKEL:nodo incluir_HK iden:id inteFin{:RESULT=nodo;
                 :}
             |error;
 
-ALS::= als iden:id VISIBILIDAD:visi llaveInicio CUERPOALS llaveFin {:
+CLASESALS::=CLASESALS:lista ALS:als {:RESULT=lista;
+        RESULT.add(als);
+        :}
+        |ALS:als {:
+        RESULT=new Nodo("clases",als.linea-1,als.columna-1);
+        RESULT.add(als);
+        :};
+
+ALS::= als iden:id VISIBILIDAD:visi llaveInicio CUERPOALS:cuerpo llaveFin {:
             RESULT=new Nodo("als",id,idright,idright);
+            RESULT.add(visi);
+            RESULT.add(cuerpo);
             :}
-    |als iden:id hereda iden:idHereda VISIBILIDAD:visi llaveInicio CUERPOALS:cuerpo llaveFin {:
+    |als iden:id VISIBILIDAD:visi hereda iden:idHereda llaveInicio CUERPOALS:cuerpo llaveFin {:
             RESULT=new Nodo("als",id,idright,idleft);
             Nodo hereda=new Nodo("hereda",idHereda,idHeredaright,idHeredaleft);
-            RESULT.add(hereda);RESULT.add(visi);
+            RESULT.add(hereda);
+            RESULT.add(visi);
             RESULT.add(cuerpo);
             :};         
 
@@ -137,49 +154,120 @@ TIPOMETODO::=resEntero:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:}
         |resCaracter:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:}
         |resCadena:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:}
         |resBool:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:}
-        |als:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:}
+        |iden:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:}
         |vacio:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:};       
 
-//faltan parametros
-ATRIBUTOALS::=var:var iden:tipo iden:id VISIBILIDAD:visi inteFin{:
-            RESULT=new Nodo("atributoAls",varright,varleft);
+//los constructores no llevan parametros
+//Declaracion de objetos 
+ATRIBUTOALS::=var:var iden:tipo LISTAID:lista inteFin{:
+            RESULT=new Nodo("atributoAlsD",varright,varleft);
             Nodo tipoVar=new Nodo("tipo",tipo,tiporight,tipoleft);
-            Nodo objeto=new Nodo("id",id,idright,idleft);
             RESULT.add(tipoVar);
-            RESULT.add(objeto);
-            RESULT.add(visi);
+            RESULT.add(lista);
             :}
-            //faltan parametros
+            //Declaracion y asignacion de objetos
             |var:var iden:tipo iden:id VISIBILIDAD:visi igual nuevo iden:tipo2 parenInicio parenFin inteFin{:
-            RESULT=new Nodo("atributoAls",varright,varleft);
+            RESULT=new Nodo("atributoAlsDI",varright,varleft);
             Nodo tipoVar=new Nodo("tipo",tipo,tiporight,tipoleft);
             Nodo tipoVar2=new Nodo("tipo",tipo2,tipo2right,tipo2left);
             Nodo objeto=new Nodo("id",id,idright,idleft);
+            objeto.add(visi);
             RESULT.add(tipoVar);
             RESULT.add(objeto);
-            RESULT.add(visi);
             RESULT.add(tipoVar2);
             :}; 
 
-ATRIBUTOVAR::=var:var TIPODATO:tipo LISTAID:lista VISIBILIDAD:visi inteFin {:
-            RESULT=new Nodo("atributoVar",varright,varleft);
-            RESULT.add(tipo);RESULT.add(lista);
-            RESULT.add(visi);
+//Declaracion de variables primitivas
+ATRIBUTOVAR::=var:var TIPODATO:tipo LISTAID:lista inteFin {:
+            RESULT=new Nodo("atributoVarD",varright,varleft);
+            RESULT.add(tipo);
+            RESULT.add(lista);
             :}
-            |var:var TIPODATO:tipo LISTAID:lista VISIBILIDAD:visi igual EXPL:exp inteFin{:
-            RESULT=new Nodo("atributoVar",varright,varleft);
-            RESULT.add(tipo);RESULT.add(lista);
-            RESULT.add(visi);
+            //Declaracin y asignacion de variables primitivas
+            |var:var TIPODATO:tipo iden:id VISIBILIDAD:visi igual EXPL:exp inteFin{:
+            RESULT=new Nodo("atributoVarDA",varright,varleft);
+            Nodo id1=new Nodo("id",id,idright,idleft);
+            id1.add(visi);
+            RESULT.add(tipo);
+            RESULT.add(id1);
             RESULT.add(exp);
             :};
+/*
+//atributo arreglo tipo objeto
+//atributoAlsArDI=atributo als-arreglo delacado e instanciado
+ATRIBUTOALSAR::=var iden:tipo1 iden:id INDICES:indices1 VISIBILIDAD:visi igual nuevo iden:tipo2 INDICES:indices2 inteFin {:
+            RESULT=new Nodo("atributoAlsArDI",id,idright,idleft);
+            Nodo tipo=new Nodo("tipo",tipo1,tipo1right,tipo1left);
+            RESULT.add(tipo);
+            RESULT.add(indices1);
+            RESULT.add(visi);
+            tipo=new Nodo("tipo",tipo2,tipo2right,tipo2left);
+            RESULT.add(tipo);
+            RESULT.add(indices2);
+            :}
+            |var iden:tipo iden:id INDICES:indices VISIBILIDAD:visi inteFin {:
+            RESULT=new Nodo("atributoAlsArD",id,idright,idleft);
+            Nodo tipo1=new Nodo("tipo",tipo,tiporight,tipoleft);
+            RESULT.add(tipo1);
+            RESULT.add(indices);
+            RESULT.add(visi);
+            :};
+*/
 
-LISTAID::=LISTAID:lista coma iden:id {:RESULT=lista;
+//atributo arreglo tipo primitivo
+ATRIBUTOVARAR::=var TIPODATO:tipo iden:id INDICES:indices VISIBILIDAD:visi inteFin{:
+            RESULT=new Nodo("atributoVarArD",id,idright,idleft);
+            RESULT.add(tipo);
+            RESULT.add(indices);
+            RESULT.add(visi);
+            :}
+            |var TIPODATO:tipo iden:id INDICES:indices VISIBILIDAD:visi igual ARREGLO:arreglo inteFin {:
+            RESULT=new Nodo("atributoVarArDA",id,idright,idleft);
+            RESULT.add(tipo);
+            RESULT.add(indices);
+            RESULT.add(visi);
+            RESULT.add(arreglo);
+            :};
+
+INDICES::=INDICES:lista corInicio EXPL:exp corFin {:RESULT=lista;
+        RESULT.add(exp);
+        :}
+        |corInicio EXPL:exp corFin {:
+        RESULT=new Nodo("indices",exp.linea-1,exp.columna-1);
+        RESULT.add(exp);
+        :};
+
+
+ARREGLO::=llaveInicio LISTAEXP:lista llaveFin {:RESULT=lista;:}
+        |llaveInicio ARREGLOS:lista llaveFin {:RESULT=lista;:};
+
+ARREGLOS::=ARREGLOS:lista coma ARREGLO:ar {:RESULT=lista;
+        for(Nodo e:ar.hijos){
+            RESULT.add(e);
+        }
+        :}
+        |ARREGLO:ar {:
+        RESULT=ar;    
+        :};
+
+LISTAEXP::=LISTAEXP:lista coma EXPL:exp {:RESULT=lista;
+        RESULT.add(exp);
+        :}
+        |EXPL:exp {:
+        RESULT=new Nodo("listaExp",exp.linea-1,exp.columna-1);
+        RESULT.add(exp);
+        :};
+
+//listado de ids para variables globales(la difencia entre LISTAID2 es que en LISTAID puede o no venir visibilidad)
+LISTAID::=LISTAID:lista coma iden:id VISIBILIDAD:visi {:RESULT=lista;
             Nodo id1=new Nodo("id",id,idright,idleft);
+            id1.add(visi);
             RESULT.add(id1);
             :}
-        |iden:id {:
+        |iden:id VISIBILIDAD:visi {:
             RESULT=new Nodo("listaIds",idright,idleft);
             Nodo id1=new Nodo("id",id,idright,idleft);
+            id1.add(visi);
             RESULT.add(id1);
             :};
 
@@ -193,18 +281,11 @@ CUERPOS::=CUERPOS:cuerpos CUERPO:cuerpo {:RESULT=cuerpos;
 
 CUERPO::=ATRIBUTOVAR:atributo {:RESULT=atributo;:} 
         |METODO:metodo {:RESULT=metodo;:}
-        |ATRIBUTOALS:atributoAls {:RESULT=atributoAls;:};
+        |ATRIBUTOALS:atributoAls {:RESULT=atributoAls;:}
+        |ATRIBUTOVARAR:arregloVar {:RESULT=arregloVar;:};
 
 CUERPOALS::=CUERPOS:cuerpos {:RESULT=cuerpos;:}
-    |;
-
-
-//faltan parametros
-METODO::=TIPOMETODO:tipo iden:id parenInicio parenFin VISIBILIDAD:visi llaveInicio SENTENCIAS llaveFin{:
-        RESULT=new Nodo("metodo",id,idright,idleft);
-        RESULT.add(tipo);
-        RESULT.add(visi);
-        :};
+    |{:RESULT=new Nodo("cuerpo",0,0);:};
 
 //expresiones artmeticas---falta llamada metodo,aumento y decremento
 EXPA::=EXPA:d1 mas:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
@@ -213,10 +294,14 @@ EXPA::=EXPA:d1 mas:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1
     |EXPA:d1 div:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
     |EXPA:d1 pot:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
     |EXPA:d1 mod:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
-    |parenInicio EXPA:d1 parenFin {:RESULT=d1;:}
+    |parenInicio EXPL:d1 parenFin {:RESULT=d1;:}
+    |menos EXPA:exp {:RESULT=new Nodo("unitario",exp.linea-1,exp.columna-1);RESULT.add(exp);:}
     |DATO:d1 {:RESULT=d1;:}
-    |iden:id1 {:RESULT=new Nodo("id",id1,id1right,id1left);:}
-    |LLAMADAMETODO:id1 {:RESULT=id1;:};
+   // |iden:id1 {:RESULT=new Nodo("id",id1,id1right,id1left);:}
+    |LLAMADAMETODO:id1 {:RESULT=id1;:}
+    |ACCESOVAR:val {:RESULT=val;:}
+    |ACCESOAR:val {:RESULT=val;:}
+    |SIMPLIFICADA:val {:RESULT=val;:};
 
 EXPR::=EXPA:d1 igualIgual:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
     |EXPA:d1 mayor:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
@@ -230,23 +315,87 @@ EXPL::=EXPL:d1 and:op EXPL:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1
     |EXPL:d1 or:op EXPL:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
     |EXPL:d1 xor:op EXPL:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
     |not:op EXPL:d1 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);:}
-    |parenInicio EXPL:d1 parenFin {:RESULT=d1;:}
     |EXPR:d1 {:RESULT=d1;:};
 
 DATO::=entero:dato {:RESULT=new Nodo("entero",dato,datoright,datoleft);:}
     |decimal:dato {:RESULT=new Nodo("decimal",dato,datoright,datoleft);:}
-    |caracter:dato {:RESULT=new Nodo("caracter",dato,datoright,datoleft);:}
-    |cadena:dato {:RESULT=new Nodo("cadena",dato,datoright,datoleft);:}
+    |caracter:dato {:dato=dato.replace("'","");RESULT=new Nodo("caracter",dato,datoright,datoleft);:}
+    |cadena:dato {:dato=dato.replace("\"","");RESULT=new Nodo("cadena",dato,datoright,datoleft);:}
     |bool:dato {:RESULT=new Nodo("bool",dato,datoright,datoleft);:};
 
 
+//faltan parametros
+METODO::=TIPOMETODO:tipo iden:id parenInicio PARAMETROSSTAR:para parenFin VISIBILIDAD:visi llaveInicio SENTENCIAS:sent llaveFin{:
+        RESULT=new Nodo("metodo",id,idright,idleft);
+        RESULT.add(tipo);
+        RESULT.add(visi);
+        RESULT.add(para);
+        RESULT.add(sent);
+        :}
+        |vacio inicio:va parenInicio parenFin llaveInicio SENTENCIAS:sent llaveFin {:
+        RESULT=new Nodo("inicio","inicio",varight,valeft);
+        RESULT.add(sent);
+        :}
+        |vacio datos:va parenInicio parenFin llaveInicio SENTENCIAS:sent llaveFin {:
+        RESULT=new Nodo("datos","datos",varight,valeft);
+        RESULT.add(sent);
+        :};
+
+
+PARAMETROSSTAR::=PARAMETROS:lista {:RESULT=lista;:}
+                |{:RESULT=new Nodo("parametros",0,0);:};
+
+PARAMETROS::=PARAMETROS:lista coma PARAMETRO:par {:RESULT=lista;
+            RESULT.add(par);
+            :}
+            |PARAMETRO:par {:
+            RESULT=new Nodo("parametros",par.linea-1,par.columna-1);
+            RESULT.add(par);
+            :};
+
+TIPODATO2::=TIPODATO:tipo {:RESULT=tipo;:}
+        |iden:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:};
+
+PARAMETRO::=var:var TIPODATO2:tipo iden:id {:
+    RESULT=new Nodo("parametro",id,idright,idleft);
+    RESULT.add(tipo);
+    :}
+    |var TIPODATO2:tipo iden:id INDICES2:dim {:
+    RESULT=new Nodo("parametroAr",id,idright,idleft);
+    RESULT.add(tipo);
+    RESULT.add(dim);
+    :};
+
+INDICES2::=INDICES2:lista corInicio corFin {:RESULT=lista;
+        Nodo n=new Nodo("dimension",0,0);
+        RESULT.add(n);
+        :}
+        |corInicio:exp corFin {:
+        RESULT=new Nodo("indices",expright,expleft);
+        Nodo n=new Nodo("dimension",0,0);
+        RESULT.add(n);
+        :};
+
 //llamada metodo
-LLAMADAMETODO::=iden:id parenInicio VALORPARAMETROS:lista parenFin {:
-            RESULT=new Nodo("llamadaMetodo",id,idright,idleft);
+LLAMADAMETODO::=llamar:lla ACCESOVAR:acc parenInicio VALORPARAMETROS:lista parenFin {:
+            RESULT=new Nodo("llamadaMetodo",llaright,llaleft);
+            RESULT.add(acc);
             RESULT.add(lista);
             :}
-            |iden:id parenInicio parenFin {:
-            RESULT=new Nodo("llamadaMetodo",id,idright,idleft);
+            |llamar:lla ACCESOVAR:acc parenInicio parenFin {:
+            RESULT=new Nodo("llamadaMetodo",llaright,llaleft);
+            Nodo n1=new Nodo("valorParametros",0,0);
+            RESULT.add(acc);
+            RESULT.add(n1);
+            :}
+            |llamarHK iden:id parenInicio VALORPARAMETROS:lista parenFin {:
+            RESULT=new Nodo("llamadaMetodoHK",id,idright,idleft);
+            RESULT.add(lista);
+            :}
+            |llamarHK iden:id parenInicio parenFin {:
+            RESULT=new Nodo("llamadaMetodoHK",id,idright,idleft);
+            Nodo n1=new Nodo("valorParametros",0,0);
+            RESULT.add(n1);
             :};
 
 VALORPARAMETROS::=VALORPARAMETROS:lista coma EXPL:exp{:RESULT=lista;
@@ -258,15 +407,234 @@ VALORPARAMETROS::=VALORPARAMETROS:lista coma EXPL:exp{:RESULT=lista;
                 :};
 
 //produccion de sentencias
-SENTENCIAS::=SENTENCIAS SENTENCIA
-            |SENTENCIA;
+SENTENCIAS1::=SENTENCIAS1:lista SENTENCIA:sent {:RESULT=lista;
+            RESULT.add(sent);
+            :}
+            |SENTENCIA:sent {:
+            RESULT=new Nodo("sentencias",sent.linea-1,sent.columna-1);
+            RESULT.add(sent);
+            :};
+
+SENTENCIAS::=SENTENCIAS1:sent {:RESULT=sent;:}
+            |{:RESULT=new Nodo("sentencias",0,0);:};
+
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//----------------------------------------------------------------
 
 
-SENTENCIA::=LLAMADAMETODO inteFin
-        |DECLARACION
-        |ASIGNACION;
 
-DECLARACION::=var TIPODATO LISTAID inteFin
-            |var TIPODATO LISTAID igual EXPL inteFin;
+SENTENCIA::=LLAMADAMETODO:sent inteFin {:RESULT=sent;:}
+        |DECLARACION:sent inteFin {:RESULT=sent;:}
+        |ASIGNACION:sent inteFin {:RESULT=sent;:}
+        |SIMPLIFICADA:sent inteFin {:RESULT=sent;:}
+        |SI:sent {:RESULT=sent;:}
+        |SELECCION:sent {:RESULT=sent;:}
+        |PARA:sent {:RESULT=sent;:}
+        |MIENTRAS:sent {:RESULT=sent;:}
+        |HACERMIENTRAS:sent inteFin {:RESULT=sent;:}
+        |RETORNO:sent inteFin {:RESULT=sent;:}
+        |TERMINAR:sent inteFin {:RESULT=sent;:}
+        |CONTINUAR:sent inteFin {:RESULT=sent;:}
+        |GRAFICARFUNCION:sent inteFin {:RESULT=sent;:}
+        |IMPRIMIR:sent inteFin {:RESULT=sent;:};
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//----------------------------------------------------------------
 
-ASIGNACION::= iden igual EXPL inteFin;
+LISTAID2::=LISTAID2:lista coma iden:id {:RESULT=lista;
+            Nodo id1=new Nodo("id",id,idright,idleft);
+            RESULT.add(id1);
+            :}
+        |iden:id {:
+            RESULT=new Nodo("listaIds",idright,idleft);
+            Nodo id1=new Nodo("id",id,idright,idleft);
+            RESULT.add(id1);
+            :};
+//varLocalD=variable local declarada
+//VarLocalDA=variable local declarada y asignada
+DECLARACION::=var:var TIPODATO:tipo LISTAID2:lista {:
+            RESULT=new Nodo("varLocalD",varright,varleft);
+            RESULT.add(tipo);
+            RESULT.add(lista);
+            :}
+            |var:var TIPODATO:tipo iden:id igual EXPL:exp 
+            {:
+            RESULT=new Nodo("varLocalDA",varright,varleft);
+            Nodo id1=new Nodo("id",id,idright,idleft);
+            RESULT.add(tipo);
+            RESULT.add(id1);
+            RESULT.add(exp);
+            :}
+            |var:var iden:tipo LISTAID2:lista {:
+            RESULT=new Nodo("varLocalAlsD",varright,varleft);
+            Nodo tipoVar=new Nodo("tipo",tipo,tiporight,tipoleft);
+            RESULT.add(tipoVar);
+            RESULT.add(lista);
+            :}
+            |var:var iden:tipo1 iden:id igual nuevo iden:tipo2 parenInicio parenFin  {:
+            RESULT=new Nodo("varLocalAlsDI",varright,varleft);
+            Nodo n1=new Nodo("id",id,idright,idleft);
+            Nodo tipoVar=new Nodo("tipo",tipo1,tipo1right,tipo1left);
+            RESULT.add(tipoVar);
+            RESULT.add(n1);
+            tipoVar=new Nodo("tipo",tipo2,tipo2right,tipo2left);
+            RESULT.add(tipoVar);
+            :}
+            |var TIPODATO:tipo iden:id INDICES:indices {:
+            RESULT=new Nodo("varLocalArD",id,idright,idleft);
+            RESULT.add(tipo);
+            RESULT.add(indices);
+            :}
+            |var TIPODATO:tipo iden:id INDICES:indices igual ARREGLO:arreglo {:
+            RESULT=new Nodo("varLocalArDA",id,idright,idleft);
+            RESULT.add(tipo);
+            RESULT.add(indices);
+            RESULT.add(arreglo);
+            :};
+
+ASIGNACION::= iden:id igual EXPL:exp {:
+    RESULT=new Nodo("asignacion",id,idright,idleft);
+    RESULT.add(exp);
+    :}
+    |iden:id igual ARREGLO:ar {:
+    RESULT=new Nodo("asignacionAr",id,idright,idleft);
+    RESULT.add(ar);
+    :}
+    //intanciacion de un previamente declarado
+    |iden:id igual nuevo iden:tipo2 parenInicio parenFin {:
+    RESULT=new Nodo("asignacionAlsI",id,idright,idleft);
+    Nodo tipoVar=new Nodo("tipo",tipo2,tipo2right,tipo2left);
+    RESULT.add(tipoVar);
+    :};
+
+ACCESOVAR::=ACCESOVAR:lista punto iden:id {:RESULT=lista;
+            Nodo id1=new Nodo("id",id,idright,idleft);
+            RESULT.add(id1);
+            :}
+            |iden:id {:
+            RESULT=new Nodo("accesoVar",idright,idleft);
+            Nodo id1=new Nodo("id",id,idright,idleft);
+            RESULT.add(id1);
+            :};
+
+//acceso a arreglos
+ACCESOAR::=iden:id INDICES:lista {:
+    RESULT=new Nodo("accesoAr",id,idright,idleft);
+    RESULT.add(lista);
+    :};
+
+//----------------------------------------------------------------
+//sentencias de control
+SI::= si:si parenInicio EXPL:exp parenFin llaveInicio SENTENCIAS:sent1 llaveFin {:
+    RESULT=new Nodo("si",siright,sileft);
+    RESULT.add(exp);
+    RESULT.add(sent1);
+    Nodo sent2=new Nodo("sentencias",0,0);
+    RESULT.add(sent2);
+    :}
+    |si:si parenInicio EXPL:exp parenFin llaveInicio SENTENCIAS:sent1 llaveFin sino llaveInicio SENTENCIAS:sent2 llaveFin {:
+    RESULT=new Nodo("si",siright,sileft);
+    RESULT.add(exp);
+    RESULT.add(sent1);
+    RESULT.add(sent2);
+    :};  
+
+
+SELECCION::=seleccion:sel parenInicio iden:id parenFin llaveInicio CASOS:lista llaveFin {:
+    RESULT=new Nodo("seleccion",selright,selleft);
+    Nodo variable=new Nodo("id",id,idright,idleft);
+    RESULT.add(variable);
+    Nodo defecto=new Nodo("defecto",0,0);
+    lista.add(defecto);
+    RESULT.add(lista);
+    :}
+    |seleccion:sel parenInicio iden:id parenFin llaveInicio CASOS:lista DEFECTO:def llaveFin{:
+    RESULT=new Nodo("seleccion",selright,selleft);
+    Nodo variable=new Nodo("id",id,idright,idleft);
+    RESULT.add(variable);
+    lista.add(def);
+    RESULT.add(lista);
+    :};
+
+CASOS::=CASOS:lista CASO:caso {:RESULT=lista;
+    RESULT.add(caso);
+    :}
+    |CASO:caso {:
+    RESULT=new Nodo("casos",caso.linea-1,caso.columna-1);
+    RESULT.add(caso);
+    :};
+
+CASO::=caso:ca EXPL:exp dosPuntos SENTENCIAS:sent{:
+    RESULT=new Nodo("caso",caright,caleft);
+    RESULT.add(exp);
+    RESULT.add(sent);
+    :};
+
+DEFECTO::=defecto:def dosPuntos SENTENCIAS:sent {:
+    RESULT=new Nodo("defecto",defright,defleft);
+    RESULT.add(sent);
+    :};
+
+SIMPLIFICADA::= EXPA:exp aumento {:RESULT=new Nodo("++",exp.linea-1,exp.columna-1);
+            RESULT.add(exp);
+            :}
+            |EXPA:exp disminucion {:RESULT=new Nodo("--",exp.linea-1,exp.columna-1);
+            RESULT.add(exp);
+            :};
+
+PARA::=para:para parenInicio VARIABLEPARA:var puntoComa EXPL:exp puntoComa SIMPLIFICADA:op parenFin llaveInicio SENTENCIAS:sent llaveFin {:
+    RESULT=new Nodo("para",pararight,paraleft);
+    RESULT.add(var);
+    RESULT.add(exp);
+    RESULT.add(op);
+    RESULT.add(sent);
+    :};
+
+VARIABLEPARA::=var:var resEntero:tipo iden:id igual EXPL:exp {:
+            RESULT=new Nodo("varLocalDA",varright,varleft);
+            Nodo id1=new Nodo("id",id,idright,idleft);
+            Nodo t=new Nodo("tipo",tipo,tiporight,tipoleft);
+            RESULT.add(t);
+            RESULT.add(id1);
+            RESULT.add(exp);
+            :}
+            | iden:id igual EXPL:exp {:
+            RESULT=new Nodo("asignacion",id,idright,idleft);
+            RESULT.add(exp);
+            :};
+
+MIENTRAS::=mientras:mi parenInicio EXPL:exp parenFin llaveInicio SENTENCIAS:sent llaveFin {:
+    RESULT=new Nodo("mientras",miright,mileft);
+    RESULT.add(exp);
+    RESULT.add(sent);
+    :};
+
+HACERMIENTRAS::=hacer:hacer llaveInicio SENTENCIAS:sent llaveFin mientras parenInicio EXPL:exp parenFin {:
+    RESULT=new Nodo("hacerMientras",hacerright,hacerleft);
+    RESULT.add(sent);
+    RESULT.add(exp);
+    :};
+
+RETORNO::=retornar:ret {:
+        RESULT=new Nodo("retorno",retright,retleft);
+        :}
+        |retornar:ret EXPL:exp {:
+        RESULT=new Nodo("retorno",retright,retleft);
+        RESULT.add(exp);    
+        :};
+
+CONTINUAR::=continuar:con {:RESULT=new Nodo("continuar",conright,conleft);:};
+
+TERMINAR::=terminar:ter {:RESULT=new Nodo("terminar",terright,terleft);:};
+
+GRAFICARFUNCION::=graphikar_funcion:g parenInicio iden:id parenFin {:
+    RESULT=new Nodo("graficarFuncion",id,gright,gleft);
+    :}; 
+
+IMPRIMIR::=imprimir:imp parenInicio EXPL:exp parenFin {:
+    RESULT=new Nodo("imprimir",impright,impleft);
+    RESULT.add(exp);
+    :};
+
+//------------------------SENTENCIAS DE FUNCION DATOS------------------

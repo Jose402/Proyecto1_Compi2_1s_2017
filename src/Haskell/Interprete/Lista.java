@@ -104,7 +104,15 @@ public class Lista extends Nodo{
                 valores.add(c+"");
             }
         }else{
-            
+            String cad=raiz.valor;
+            tipo="cadena";
+            valor=raiz.valor;
+            cad=cad.replace("'","");
+            indices.add(cad.length());
+            for(int i=0;i<cad.length();i++){
+                char c=cad.charAt(i);
+                valores.add(c+"");
+            }
         }
     }
     
@@ -149,11 +157,11 @@ public class Lista extends Nodo{
                 valor+="]]";
             }
         }else if(tipo.equals("cadena")){
-            valor+="\"";
+            //valor+="\"";
             for(Object val:valores){
                 valor+=val;
             }
-            valor+="\"";
+            //valor+="\"";
         }
         return valor;
     }
@@ -161,15 +169,16 @@ public class Lista extends Nodo{
     public ResultadoH getValor(ArrayList<Integer> index){
         
         int indice=index.get(0);
+        indice=indice+1;
         for(int i=1;i<index.size();i++){
             int n=indices.get(i);
             int j=index.get(i)+1;
-            indice=indice+1;
+            //indice=indice+1;
             indice=(indice-1)*n+j;
         }
-        if(indices.size()>1){
+        //if(indices.size()>1){
             indice=indice-1;
-        }
+        //}
         if(valores.size()>=indice){
             return new ResultadoH(tipo,valores.get(indice)+"");
         }else{

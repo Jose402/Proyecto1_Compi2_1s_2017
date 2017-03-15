@@ -34,7 +34,9 @@ public class Declaracion {
     
     public Declaracion(String nombre,ResultadoH valor,TablaSimboloH tabla){
         this.tabla=tabla;
+        
         SimboloH simbolo=new SimboloH(valor.tipo,nombre,valor.valor);
+        simbolo.lista=valor.lista;
         if(!tabla.setSimbolo(simbolo)){
             System.out.println("Error semantico,La variable ya existe!!!");
         }
@@ -51,6 +53,7 @@ public class Declaracion {
             lista.indices.add(0);
         }
         String nombre=raiz.valor;
+        
         SimboloH simbolo=new SimboloH(nombre,lista);
         if(!tabla.setSimbolo(simbolo)){
            System.out.println("Error semantico,El simbolo ya existe!!!");

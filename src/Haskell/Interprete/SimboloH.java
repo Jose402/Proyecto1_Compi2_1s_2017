@@ -20,6 +20,7 @@ public class SimboloH {
         this.tipo=lista.tipo;
         this.nombre=nombre;
         this.lista=lista;
+        this.valor=lista.getString();
     }
     
         public SimboloH(String tipo,String nombre,String valor){

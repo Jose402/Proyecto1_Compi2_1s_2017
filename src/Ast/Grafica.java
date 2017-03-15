@@ -12,12 +12,12 @@ import java.io.FileWriter;
  *
  * @author Jose2
  */
-public class Graficar {
+public class Grafica {
     
     private File archivoDot;
     private String cadenaDot = "";
     
-     public Graficar(Nodo opRaiz) {
+     public Grafica(Nodo opRaiz) {
         String nombre="ast";
         cadenaDot = cadenaDot + "digraph lista{ rankdir=TB;node [shape = box, style=rounded]; ";
         recorrer(opRaiz);

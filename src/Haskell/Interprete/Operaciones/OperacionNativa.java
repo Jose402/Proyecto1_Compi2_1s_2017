@@ -6,10 +6,12 @@
 package Haskell.Interprete.Operaciones;
 
 import Ast.Nodo;
+import Haskell.Interprete.FuncionH;
 import Haskell.Interprete.Lista;
 import Haskell.Interprete.ResultadoH;
 import Haskell.Interprete.SimboloH;
 import Haskell.Interprete.TablaSimboloH;
+import Interfaz.Inicio;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -102,13 +104,15 @@ public class OperacionNativa {
     }
     
     private ResultadoH succ(Nodo raiz){
-        ResultadoH calcular=calcular(raiz.hijos.get(0));
+        opA=new OperacionAritmetica(tabla);
+        ResultadoH calcular=opA.resolver(raiz.hijos.get(0));
         Double valor=Double.parseDouble(calcular.valor);
         valor=valor+1;
         return new ResultadoH(calcular.tipo,valor+"");
     }
     private ResultadoH decc(Nodo raiz){
-        ResultadoH calcular=calcular(raiz.hijos.get(0));
+        opA=new OperacionAritmetica(tabla);
+        ResultadoH calcular=opA.resolver(raiz.hijos.get(0));
         Double valor=Double.parseDouble(calcular.valor);
         valor=valor-1;
         return new ResultadoH(calcular.tipo,valor+"");
@@ -128,16 +132,32 @@ public class OperacionNativa {
     
     private ResultadoH product(Lista lista){
         Double d=1.0;
-        for(int i=0;i<lista.valores.size();i++){
-            d=d*Double.parseDouble(lista.valores.get(i)+"");
+        if(lista.tipo.equals("numero")){
+            for(int i=0;i<lista.valores.size();i++){
+                d=d*Double.parseDouble(lista.valores.get(i)+"");
+            }
+        }else{
+            for(int i=0;i<lista.valores.size();i++){
+                String c1=(String)lista.valores.get(i);
+                char c=c1.charAt(0);
+                d=d*c;
+            }
         }
         return new ResultadoH(lista.tipo,d+"");
     }
     
     private ResultadoH sum(Lista lista){
         Double d=0.0;
-        for(int i=0;i<lista.valores.size();i++){
-            d=d+Double.parseDouble(lista.valores.get(i)+"");
+        if(lista.tipo.equals("numero")){
+            for(int i=0;i<lista.valores.size();i++){
+                d=d+Double.parseDouble(lista.valores.get(i)+"");
+            }
+        }else{
+            for(int i=0;i<lista.valores.size();i++){
+                String c1=(String)lista.valores.get(i);
+                char c=c1.charAt(0);
+                d=d+c;
+            }
         }
         return new ResultadoH(lista.tipo,d+"");
     }
@@ -191,8 +211,16 @@ public class OperacionNativa {
             clon.indices.add(clon.valores.size());
             return clon;
         }else{
-            //error semantico, la lista no es de tipo numero
-            return null;
+            for(int i=0;i<lista.valores.size();i++){
+                String c1=(String)lista.valores.get(i);
+                char c=c1.charAt(0);
+                if((c%2)==0){
+                    clon.valores.add(c);
+                }
+                
+            }
+            clon.indices.add(clon.valores.size());
+            return clon;
         }
     }
 
@@ -209,8 +237,16 @@ public class OperacionNativa {
             clon.indices.add(clon.valores.size());
             return clon;
         }else{
-            //error semantico, la lista no es de tipo numero
-            return null;
+            for(int i=0;i<lista.valores.size();i++){
+                String c1=(String)lista.valores.get(i);
+                char c=c1.charAt(0);
+                if(!((c%2)==0)){
+                    clon.valores.add(c);
+                }
+                
+            }
+            clon.indices.add(clon.valores.size());
+            return clon;
         }
     }
     
@@ -225,7 +261,11 @@ public class OperacionNativa {
             Lista l1=new Lista(raiz,tabla);
             l1=operar(raiz.etiqueta,l1);
             return l1;
-        }else if(raiz.etiqueta.equals("id")){
+        }else if(raiz.etiqueta.equals("llamada")){
+            FuncionH f =Inicio.interprete.llamada(raiz);
+            return f.retorno.lista;
+        }
+        else if(raiz.etiqueta.equals("id")){
             //buscar id en la tabla de simbolos
             String nombre=raiz.valor;
             SimboloH s=tabla.getSimbolo(nombre);

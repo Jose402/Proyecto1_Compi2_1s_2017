@@ -2,11 +2,18 @@
 package Interfaz;
 
 import Haskell.Analisis.*;
-import Ast.Graficar;
+import Ast.Grafica;
 import Ast.Nodo;
+import Graphik.Analisis.*;
+import Graphik.Compilador.Compilador;
+import Graphik.Compilador.Operaciones.OperacionAritmeticaG;
+import Graphik.Compilador.Operaciones.OperacionLogicaG;
+import Graphik.Compilador.Operaciones.OperacionRelacionalG;
+import Graphik.Compilador.ResultadoG;
 import Haskell.Interprete.Consola;
-import Haskell.Interprete.Interprete;
-import Haskell.Interprete.ResultadoH;
+import Haskell.Interprete.*;
+import Haskell.Interprete.Operaciones.OperacionAritmetica;
+import Reporte.ReporteError;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,11 +42,33 @@ public class Inicio extends javax.swing.JFrame {
     public  ArrayList<Editor> listaPestania;
     private Editor pestaniaActiva;
     Consola consola;
+    
+    //--------------atributos staticos---------------------
     public static Interprete interprete;
+    public static Compilador compilador;
+    public static ReporteError reporteError;
+    
+    //-------------------------------------------
     public Inicio() {
         initComponents();
         listaPestania=new ArrayList<>();
         consola=new Consola(txtConsola);
+        Object o1=true;
+        Object o2=false;
+        String a="null";
+        String s1="kose";
+        String s2="jose";
+        int val=s1.compareTo(s2);
+        if((Boolean)o1==(Boolean)o2){
+            a="true";
+        }else{
+            a="false";
+        }
+        try{
+        System.out.println(a);
+        }catch(Exception e){
+            System.err.println(e.toString());
+        }
         
     }
     
@@ -266,13 +295,29 @@ public class Inicio extends javax.swing.JFrame {
 
     public static Nodo raiz;
     private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
+        compilador=new Compilador();
+        reporteError=new ReporteError();
+        
         String cadena=pestaniaActiva.getText();
         
+        
         try { 
-            //new Sintactico(new Lexico(new BufferedReader( new StringReader(cadena)))).parse();
-            //new Graficar(raiz);
+            new Sintactico(new Lexico(new BufferedReader( new StringReader(cadena)))).parse();
+            new Grafica(raiz);
+            //OperacionAritmeticaG opA=new OperacionAritmeticaG();
+            //ResultadoG r=opA.operar(raiz);
+            
+            //OperacionRelacionalG opR=new OperacionRelacionalG();
+            //ResultadoG r=opR.operar(raiz);
+            
+            OperacionLogicaG opL=new OperacionLogicaG();
+            ResultadoG r=opL.operar(raiz);
+            
+            String salida="tipo:"+r.tipo+" valor:"+r.valor;
+            txtConsola.setText(salida);
+            /*
             new SintacticoH(new LexicoH(new BufferedReader( new StringReader(cadena)))).parse();
-            //new Graficar(raiz);
+            new Grafica(raiz);
 
             interprete=new Interprete(raiz);
             ArrayList<ResultadoH> l=new ArrayList<>();
@@ -282,8 +327,7 @@ public class Inicio extends javax.swing.JFrame {
             //l.add(r1);
             ResultadoH r3=interprete.ejecutar("switch", l);
             txtConsola.append(">"+r3.valor+"\n");
-                    
-// TODO add your handling code here:
+            */
         } catch (Exception ex) {
             Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
         }

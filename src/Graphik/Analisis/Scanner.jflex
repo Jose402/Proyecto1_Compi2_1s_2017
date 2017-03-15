@@ -20,12 +20,12 @@ Comentario1 ="/"[*] [^*]+ [*]"/" | "/"[*] [*]+ "/"
 
 entero =[0-9]+ 
 decimal =[0-9]+ "."? [0-9]*
-cadena =[\"] [^\"\n]+ [\"\n]
+cadena =[\"] [^\"\n]* [\"\n]
 letra =[a-zA-ZÑñ]+
 iden ={letra}({letra}|{entero}|"_")*
 idenImportar ={letra}({letra}|{entero}|"_")*".gk"
 caracter="'"[^]"'"
-bool=("verdadero"|"false"|"1"|"0")
+bool=("verdadero"|"falso"|"1"|"0")
 
 
 

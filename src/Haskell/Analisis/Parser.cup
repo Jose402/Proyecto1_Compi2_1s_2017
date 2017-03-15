@@ -131,7 +131,7 @@ CALCULAR::=dolar calcular:cal EXPA:exp dolar{:
 		RESULT.add(exp);
 		:};
 
-SIMPLIFICADA::=dolar TIPOSIMPLIFICADA:tipo CALCULAR:cal dolar {:
+SIMPLIFICADA::=dolar TIPOSIMPLIFICADA:tipo VALOREXP:cal dolar {:
 		RESULT=new Nodo(tipo.etiqueta,tipo.linea-1,tipo.columna-1);
 		RESULT.add(cal); 
 		:};
@@ -178,9 +178,10 @@ TIPOLISTA::=iden:id {:RESULT=new Nodo("id",id,idright,idleft);:}
 			|ARRAY:val {:RESULT=val;:}
 			|OPERACIONLISTA2:val {:RESULT=val;:}
 			|CONCA:val {:RESULT=val;:}
-			|cadena:cad {:RESULT=new Nodo("cadena",cad,cadright,cadleft);:};
+			|cadena:cad {:RESULT=new Nodo("cadena",cad,cadright,cadleft);:}
+			|LLAMADA:cad {:RESULT=cad;:};
 
-CONCA::=dolar TIPOLISTA:val1 concatenar TIPOLISTA:val2 dolar {:
+CONCA::=TIPOLISTA:val1 concatenar TIPOLISTA:val2{:
 	RESULT=new Nodo("concatenar",val1.linea-1,val2.columna-1);
 	RESULT.add(val1);
 	RESULT.add(val2);
@@ -188,7 +189,7 @@ CONCA::=dolar TIPOLISTA:val1 concatenar TIPOLISTA:val2 dolar {:
 
 //-----------------------------------------------------
 //declaracion de listas
-LISTA::= dolar let iden:id igual TIPOLISTA:val dolar {:
+LISTA::= let iden:id igual TIPOLISTA:val {:
 	RESULT=new Nodo("declaracionLista",id,idright,idleft);
 	RESULT.add(val);
 	:}; 
@@ -222,18 +223,18 @@ TIPOVALOR::=CALCULAR:val {:RESULT=val;:}
 
 
 //acceso a listas
-ACCESO::=dolar TIPOLISTA:val INDICE:indice dolar {:
+ACCESO::=TIPOLISTA:val INDICE:indice{:
 	RESULT=new Nodo("acceso",valright,valleft);
 	RESULT.add(val);
 	RESULT.add(indice);
 	:}
 	;		
 
-INDICE::=INDICE:lista indice VALOREXP:exp {:RESULT=lista;
+INDICE::=INDICE:lista indice CALCULAR:exp {:RESULT=lista;
 		//Nodo indice=new Nodo("numero",num,numright,numleft);
 		RESULT.add(exp);
 		:}
-		|indice:ind VALOREXP:exp {:
+		|indice:ind CALCULAR:exp {:
 		//Nodo indice=new Nodo("numero",num,numright,numleft);
 		RESULT=new Nodo("indices",indright,indleft);
 		RESULT.add(exp);
@@ -278,7 +279,7 @@ FUNCIONES::=FUNCIONES:lista SALTOS FUNCION:funcion {:RESULT=lista;
 
 
 PARAMETROSTAR::=PARAMETROS:par {:RESULT=par;:}
-			|;
+			|{:RESULT=new Nodo("parametros",0,0);:};
 
 PARAMETROS::=PARAMETROS:para coma iden:id {:RESULT=para;
 			Nodo par=new Nodo("id",id,idright,idleft);
@@ -295,7 +296,7 @@ LLAMADA::=dolar iden:id llaveInicio VALORESSTAR:parametros llaveFin dolar {:
 		:};
 
 VALORESSTAR::=VALORESPARA:val {:RESULT=val;:}
-			|;
+			|{:RESULT=new Nodo("valorParametros",0,0);:};
 
 VALORESPARA::=VALORESPARA:para coma TIPOVALORPARA:val {:RESULT=para;
 			RESULT.add(val);
@@ -308,7 +309,8 @@ VALORESPARA::=VALORESPARA:para coma TIPOVALORPARA:val {:RESULT=para;
 TIPOVALORPARA::=CALCULAR:cal {:RESULT=cal;:}
 			|iden:id {:RESULT=new Nodo("id",id,idright,idleft);:}
 			|ARRAY:val {:RESULT=val;:}
-			|cadena:cad {:RESULT=new Nodo("cadena",cad,cadright,cadleft);:};
+			|cadena:cad {:RESULT=new Nodo("cadena",cad,cadright,cadleft);:}
+			|caracter:cad {:RESULT=new Nodo("caracter",cad,cadright,cadleft);:};
 
 SI::=si:si EXPL:exp then SALTOS SENTENCIAS:sent SALTOS sino SALTOS SENTENCIAS:sentSino SALTOS end {:
 	Nodo sentSi=new Nodo("if",siright,sileft);
@@ -341,4 +343,5 @@ CASO::=VALORCASE:val dosPuntos SENTENCIAS:sent puntoComa SALTOS {:
 	:};
 
 VALORCASE::=numero:num {:RESULT=new Nodo("numero",num,numright,numleft);:}
-		|cadena:cad {:RESULT=new Nodo("cadena",cad,cadright,cadleft);:};
+		|cadena:cad {:RESULT=new Nodo("cadena",cad,cadright,cadleft);:}
+		|caracter:cad {:RESULT=new Nodo("caracter",cad,cadright,cadleft);:};

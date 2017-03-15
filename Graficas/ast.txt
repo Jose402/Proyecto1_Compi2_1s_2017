@@ -1,34 +1,26 @@
-digraph lista{ rankdir=TB;node [shape = box, style=rounded]; nodo1953939389[label="concatenar ", color="cyan", style ="filled", shape="doublecircle"]; 
-"nodo1953939389"-> "nodo539380999"
-"nodo1953939389"-> "nodo847976206"
-nodo539380999[label="concatenar ", color="cyan", style ="filled", shape="doublecircle"]; 
-"nodo539380999"-> "nodo1234612750"
-"nodo539380999"-> "nodo1149491936"
-nodo1234612750[label="valores ", color="cyan", style ="filled", shape="doublecircle"]; 
-"nodo1234612750"-> "nodo748079940"
-"nodo1234612750"-> "nodo1610282042"
-nodo748079940[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
-"nodo748079940"-> "nodo1421360400"
-nodo1421360400[label="1  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
-nodo1610282042[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
-"nodo1610282042"-> "nodo196153572"
-nodo196153572[label="2  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
-nodo1149491936[label="valores ", color="cyan", style ="filled", shape="doublecircle"]; 
-"nodo1149491936"-> "nodo365686459"
-"nodo1149491936"-> "nodo2141602346"
-nodo365686459[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
-"nodo365686459"-> "nodo2084705502"
-nodo2084705502[label="1  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
-nodo2141602346[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
-"nodo2141602346"-> "nodo1449671309"
-nodo1449671309[label="2  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
-nodo847976206[label="valores ", color="cyan", style ="filled", shape="doublecircle"]; 
-"nodo847976206"-> "nodo1423715148"
-"nodo847976206"-> "nodo1117697562"
-nodo1423715148[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
-"nodo1423715148"-> "nodo1103464225"
-nodo1103464225[label="1  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
-nodo1117697562[label="calcular ", color="cyan", style ="filled", shape="doublecircle"]; 
-"nodo1117697562"-> "nodo254454083"
-nodo254454083[label="2  [numero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+digraph lista{ rankdir=TB;node [shape = box, style=rounded]; nodo1360814716[label="&& ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1360814716"-> "nodo512091262"
+"nodo1360814716"-> "nodo1750866905"
+nodo512091262[label="> ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo512091262"-> "nodo1999141141"
+"nodo512091262"-> "nodo36015825"
+nodo1999141141[label="+ ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1999141141"-> "nodo1875065968"
+"nodo1999141141"-> "nodo2058688098"
+nodo1875065968[label="== ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1875065968"-> "nodo114342622"
+"nodo1875065968"-> "nodo1906067536"
+nodo114342622[label="+ ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo114342622"-> "nodo1263515253"
+"nodo114342622"-> "nodo1582555635"
+nodo1263515253[label="> ", color="cyan", style ="filled", shape="doublecircle"]; 
+"nodo1263515253"-> "nodo1427589350"
+"nodo1263515253"-> "nodo1806901166"
+nodo1427589350[label="3  [entero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1806901166[label="2  [entero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1582555635[label="2  [entero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1906067536[label="3  [entero] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo2058688098[label="4.1  [decimal] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo36015825[label="5.0  [decimal] ", color="cyan", style ="filled", shape="doublecircle"]; 
+nodo1750866905[label="verdadero  [bool] ", color="cyan", style ="filled", shape="doublecircle"]; 
 }

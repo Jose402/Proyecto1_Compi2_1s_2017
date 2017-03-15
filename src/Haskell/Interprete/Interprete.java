@@ -67,7 +67,7 @@ public class Interprete {
     }
     
     private void guardarParametros(Nodo parametros,ArrayList<ResultadoH> valorParametros){
-        for(int i=0;i<parametros.hijos.size();i++){
+        for(int i=0;i<valorParametros.size();i++){
             Nodo parametro=parametros.hijos.get(i);
             ResultadoH valor=valorParametros.get(i);
             new Declaracion(parametro.valor,valor,tabla);
@@ -79,7 +79,12 @@ public class Interprete {
         for(Nodo sentencia:sentencias.hijos){
             switch(sentencia.etiqueta){
                 case "declaracionLista":
-                    new Declaracion(sentencia, tabla);
+                    Declaracion dec =new Declaracion(tabla);
+                    SimboloH sDec =dec.declarar(sentencia);
+                    funcionActual.retorno=new ResultadoH();
+                    funcionActual.retorno.lista=sDec.lista;
+                    funcionActual.retorno.valor=sDec.valor;
+                    funcionActual.retorno.tipo=sDec.tipo;
                     break;
                 case "acceso":
                     SimboloH s=null;
@@ -141,6 +146,11 @@ public class Interprete {
             }
         }
         return funcionActual;
+    }
+    
+    public FuncionH llamada(Nodo raiz,TablaSimboloH tabla){
+        this.tabla=tabla;
+        return llamada(raiz);
     }
     
     public FuncionH llamada(Nodo raiz){

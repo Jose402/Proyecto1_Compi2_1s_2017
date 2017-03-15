@@ -38,7 +38,7 @@ public class Consola {
                 }
                 break; 
             case "llamada":
-                    FuncionH funcionActual=Inicio.interprete.llamada(raiz);
+                    FuncionH funcionActual=Inicio.interprete.llamada(raiz,tabla);
                     txtConsola.append("\n");
                     txtConsola.append(">"+funcionActual.retorno.valor);
                     break;
