@@ -1,19 +1,21 @@
-
 package Interfaz;
 
 import Haskell.Analisis.*;
 import Ast.Grafica;
 import Ast.Nodo;
 import Graphik.Analisis.*;
-import Graphik.Compilador.Compilador;
+import Graphik.Compilador.Graphik;
 import Graphik.Compilador.Operaciones.OperacionAritmeticaG;
 import Graphik.Compilador.Operaciones.OperacionLogicaG;
 import Graphik.Compilador.Operaciones.OperacionRelacionalG;
 import Graphik.Compilador.ResultadoG;
+import Graphik.Grafica.Coordenadas;
+import Graphik.Grafica.Plano;
 import Haskell.Interprete.Consola;
 import Haskell.Interprete.*;
 import Haskell.Interprete.Operaciones.OperacionAritmetica;
 import Reporte.ReporteError;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,53 +40,37 @@ public class Inicio extends javax.swing.JFrame {
     /**
      * Creates new form Inicio
      */
-    public  int indicePestania=0;
-    public  ArrayList<Editor> listaPestania;
+    public int indicePestania = 0;
+    public ArrayList<Editor> listaPestania;
     private Editor pestaniaActiva;
     Consola consola;
-    
+
     //--------------atributos staticos---------------------
     public static Interprete interprete;
-    public static Compilador compilador;
+    public static Graphik compilador;
     public static ReporteError reporteError;
-    
+    public static Coordenadas coordenadas;
+
     //-------------------------------------------
     public Inicio() {
         initComponents();
-        listaPestania=new ArrayList<>();
-        consola=new Consola(txtConsola);
-        Object o1=true;
-        Object o2=false;
-        String a="null";
-        String s1="kose";
-        String s2="jose";
-        int val=s1.compareTo(s2);
-        if((Boolean)o1==(Boolean)o2){
-            a="true";
-        }else{
-            a="false";
-        }
-        try{
-        System.out.println(a);
-        }catch(Exception e){
-            System.err.println(e.toString());
-        }
-        
+        listaPestania = new ArrayList<>();
+        consola = new Consola(txtConsola);
+        setTitle("Graphik && Haskell++");
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Media/icono.png")));
     }
-    
-    
+
     private void crearPestania(String texto, String nombre, File file) {
         //"text/html"
-        Editor pestania = new Editor(texto,nombre,file);
+        Editor pestania = new Editor(texto, nombre, file);
         Panel panelTitulo = new Panel(this);
         panelTab.addTab(nombre, pestania);
         panelTab.setTabComponentAt(indicePestania, panelTitulo);
         panelTab.setSelectedIndex(indicePestania);
         indicePestania++;
-        pestaniaActiva=pestania;
+        pestaniaActiva = pestania;
         listaPestania.add(pestaniaActiva);
     }
-    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -181,11 +167,11 @@ public class Inicio extends javax.swing.JFrame {
                     .addComponent(btnCompilar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnTablaError))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelTab, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE)
+                .addComponent(panelTab, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblPosicion))
+                .addComponent(lblPosicion, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         menuBar.setBackground(new java.awt.Color(255, 255, 255));
@@ -295,26 +281,24 @@ public class Inicio extends javax.swing.JFrame {
 
     public static Nodo raiz;
     private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
-        compilador=new Compilador();
-        reporteError=new ReporteError();
-        
-        String cadena=pestaniaActiva.getText();
-        
-        
-        try { 
-            new Sintactico(new Lexico(new BufferedReader( new StringReader(cadena)))).parse();
-            new Grafica(raiz);
+        txtConsola.setText("");
+        reporteError = new ReporteError();
+        coordenadas = new Coordenadas();
+
+        String cadena = pestaniaActiva.getText();
+
+        try {
+            new Sintactico(new Lexico(new BufferedReader(new StringReader(cadena)))).parse();
+            //new Grafica(raiz);
+
             //OperacionAritmeticaG opA=new OperacionAritmeticaG();
             //ResultadoG r=opA.operar(raiz);
-            
             //OperacionRelacionalG opR=new OperacionRelacionalG();
             //ResultadoG r=opR.operar(raiz);
-            
-            OperacionLogicaG opL=new OperacionLogicaG();
-            ResultadoG r=opL.operar(raiz);
-            
-            String salida="tipo:"+r.tipo+" valor:"+r.valor;
-            txtConsola.setText(salida);
+            //OperacionLogicaG opL=new OperacionLogicaG();
+            //ResultadoG r=opL.operar(raiz);
+            //String salida="tipo:"+r.tipo+" valor:"+r.valor;
+            //txtConsola.setText(salida);
             /*
             new SintacticoH(new LexicoH(new BufferedReader( new StringReader(cadena)))).parse();
             new Grafica(raiz);
@@ -327,25 +311,32 @@ public class Inicio extends javax.swing.JFrame {
             //l.add(r1);
             ResultadoH r3=interprete.ejecutar("switch", l);
             txtConsola.append(">"+r3.valor+"\n");
-            */
+             */
         } catch (Exception ex) {
             Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (raiz != null) {
+            compilador = new Graphik(raiz);
+            if (!coordenadas.vacio()) {
+                Plano plano = new Plano();
+                plano.setVisible(true);
+            }
         }
     }//GEN-LAST:event_btnCompilarActionPerformed
 
     private void txtConsolaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtConsolaKeyPressed
         // TODO add your handling code here:
-        
-        if(evt.getKeyCode()==evt.VK_ENTER){
-            String cadena=getTextLine();
-            char c=cadena.charAt(0);
-            if(c!='>'){
+
+        if (evt.getKeyCode() == evt.VK_ENTER) {
+            String cadena = getTextLine();
+            char c = cadena.charAt(0);
+            if (c != '>') {
                 try {
-                
-                new SintacticoH(new LexicoH(new BufferedReader( new StringReader(cadena)))).parse();
-                consola.ejecutar(raiz);
+
+                    new SintacticoH(new LexicoH(new BufferedReader(new StringReader(cadena)))).parse();
+                    consola.ejecutar(raiz);
                 } catch (Exception ex) {
-                    System.out.println(ex+"");
+                    System.out.println(ex + "");
                 }
             }
         }
@@ -354,60 +345,60 @@ public class Inicio extends javax.swing.JFrame {
     private void itemCargarFuncionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemCargarFuncionesActionPerformed
         try {
             // TODO add your handling code here:
-            String cadena=pestaniaActiva.getText();
-            new SintacticoH(new LexicoH(new BufferedReader( new StringReader(cadena)))).parse();
-            interprete=new Interprete(raiz);
-            
+            String cadena = pestaniaActiva.getText();
+            new SintacticoH(new LexicoH(new BufferedReader(new StringReader(cadena)))).parse();
+            interprete = new Interprete(raiz);
+
         } catch (Exception ex) {
             Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_itemCargarFuncionesActionPerformed
 
-    private String getTextLine(){
-        String cadena=txtConsola.getText();
-        String cadenas[]=cadena.split("\n");
-        return cadenas[cadenas.length-1];
+    private String getTextLine() {
+        String cadena = txtConsola.getText();
+        String cadenas[] = cadena.split("\n");
+        return cadenas[cadenas.length - 1];
     }
-    private void guardar(){
-        if(pestaniaActiva!=null){
-            if(pestaniaActiva.file!=null){
+
+    private void guardar() {
+        if (pestaniaActiva != null) {
+            if (pestaniaActiva.file != null) {
                 if (pestaniaActiva.getText().matches("[[ ]*[\n]*[\t]]*")) {//compara si en el JTextArea hay texto sino muestrtra un mensaje en pantalla
-                JOptionPane.showMessageDialog(null,"No hay texto para guardar!", "Error", JOptionPane.ERROR_MESSAGE);
-            }else{
-                PrintWriter printwriter = null;
-                try {
-                    printwriter = new PrintWriter(pestaniaActiva.file);
-                    printwriter.print(pestaniaActiva.getText());//escribe en el archivo todo lo que se encuentre en el JTextArea
-                    printwriter.close();//cierra el archivo
-                } catch (Exception e) {
-                    
-                } finally {
-                    printwriter.close();
+                    JOptionPane.showMessageDialog(null, "No hay texto para guardar!", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    PrintWriter printwriter = null;
+                    try {
+                        printwriter = new PrintWriter(pestaniaActiva.file);
+                        printwriter.print(pestaniaActiva.getText());//escribe en el archivo todo lo que se encuentre en el JTextArea
+                        printwriter.close();//cierra el archivo
+                    } catch (Exception e) {
+
+                    } finally {
+                        printwriter.close();
+                    }
                 }
-            }
-            }else{
+            } else {
                 guardarComo();
             }
-        }else{
-            JOptionPane.showMessageDialog(null,"No hay pestañas activas", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "No hay pestañas activas", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    
-    private void guardarComo(){
-        if(pestaniaActiva!=null){
+
+    private void guardarComo() {
+        if (pestaniaActiva != null) {
             String texto = pestaniaActiva.getText();//variable para comparacion
 
             if (texto.matches("[[ ]*[\n]*[\t]]*")) {//compara si en el JTextArea hay texto sino muestrtra un mensaje en pantalla
-                JOptionPane.showMessageDialog(null,"No hay texto para guardar!", "Error", JOptionPane.ERROR_MESSAGE);
-            }else{
+                JOptionPane.showMessageDialog(null, "No hay texto para guardar!", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
 
                 JFileChooser fileChooser = new JFileChooser();
                 FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos Graphik", "gk");
                 fileChooser.setFileFilter(filtro);
                 int seleccion = fileChooser.showSaveDialog(null);
-                try{
-                    if (seleccion == JFileChooser.APPROVE_OPTION){//comprueba si ha presionado el boton de aceptar
+                try {
+                    if (seleccion == JFileChooser.APPROVE_OPTION) {//comprueba si ha presionado el boton de aceptar
                         File JFC = fileChooser.getSelectedFile();
                         String PATH = JFC.getAbsolutePath();//obtenemos el path del archivo a guardar
                         PrintWriter printwriter = new PrintWriter(JFC);
@@ -415,39 +406,39 @@ public class Inicio extends javax.swing.JFrame {
                         printwriter.close();//cierra el archivo
 
                         //comprobamos si a la hora de guardar obtuvo la extension y si no se la asignamos
-                        if(!(PATH.endsWith(".gk"))){
-                            File temp = new File(PATH+".gk");
+                        if (!(PATH.endsWith(".gk"))) {
+                            File temp = new File(PATH + ".gk");
                             JFC.renameTo(temp);//renombramos el archivo
                         }
 
-                        JOptionPane.showMessageDialog(null,"Guardado con exito!", "Guardado exitoso!", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Guardado con exito!", "Guardado exitoso!", JOptionPane.INFORMATION_MESSAGE);
                     }
-                }catch (Exception e){//por alguna excepcion salta un mensaje de error
-                    JOptionPane.showMessageDialog(null,"Error al guardar el archivo!", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (Exception e) {//por alguna excepcion salta un mensaje de error
+                    JOptionPane.showMessageDialog(null, "Error al guardar el archivo!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-            } 
-        }else{
-            JOptionPane.showMessageDialog(null,"No hay pestañas activas", "Error", JOptionPane.ERROR_MESSAGE);       
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "No hay pestañas activas", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    private void abrirArchivo(){
+
+    private void abrirArchivo() {
         JFileChooser archivo = new JFileChooser();
         archivo.setVisible(true);
-        FileNameExtensionFilter filtroImagen = new FileNameExtensionFilter("Archivos Graphik", "gk");
+        FileNameExtensionFilter filtroImagen = new FileNameExtensionFilter("Archivos Graphik|Haskell", "gk", "hk");
         archivo.setFileFilter(filtroImagen);
         archivo.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int seleccion = archivo.showDialog(this, "Cargar archivo");
         if (JFileChooser.APPROVE_OPTION == seleccion) {
             File file = new File(archivo.getSelectedFile().getAbsolutePath());
             crearPestania(obtenerTextoArchivo(file), file.getName(), file);
-        }else{
-             /*JOptionPane.showMessageDialog(null,"" +
+        } else {
+            /*JOptionPane.showMessageDialog(null,"" +
            "\nNo se ha encontrado el archivo",
                  "ADVERTENCIA!!!",JOptionPane.WARNING_MESSAGE);*/
         }
     }
-    
+
     String obtenerTextoArchivo(File file) {
         String texto = "";
         try {
@@ -469,12 +460,12 @@ public class Inicio extends javax.swing.JFrame {
         }
         return texto;
     }
-    
-    private void nuevoArchivo(){
+
+    private void nuevoArchivo() {
         String nombre = "nuevo" + ".gk";
-        crearPestania("",nombre,null);
+        crearPestania("", nombre, null);
     }
-    
+
     /**
      * @param args the command line arguments
      */
@@ -527,6 +518,6 @@ public class Inicio extends javax.swing.JFrame {
     private javax.swing.JPanel panelPrincipal;
     public javax.swing.JTabbedPane panelTab;
     private javax.swing.JScrollPane scrollPanel;
-    private javax.swing.JTextArea txtConsola;
+    public static javax.swing.JTextArea txtConsola;
     // End of variables declaration//GEN-END:variables
 }

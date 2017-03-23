@@ -12,16 +12,16 @@ import Ast.Nodo;
  * @author Jose2
  */
 public class FuncionH {
-    
+
     public String nombre;
     public String tipo;
     public String id;
     public ResultadoH retorno;
     public Nodo raiz;
-    
-    public FuncionH(String nombre,Nodo raiz){
-        this.nombre=nombre;
-        this.raiz=raiz;
-        this.id=nombre;
+
+    public FuncionH(String nombre, Nodo raiz) {
+        this.nombre = nombre;
+        this.raiz = raiz;
+        this.id = nombre;
     }
 }

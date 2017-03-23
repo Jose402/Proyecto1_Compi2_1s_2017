@@ -13,18 +13,18 @@ import java.io.FileWriter;
  * @author Jose2
  */
 public class Grafica {
-    
+
     private File archivoDot;
     private String cadenaDot = "";
-    
-     public Grafica(Nodo opRaiz) {
-        String nombre="ast";
+
+    public Grafica(Nodo opRaiz) {
+        String nombre = "ast";
         cadenaDot = cadenaDot + "digraph lista{ rankdir=TB;node [shape = box, style=rounded]; ";
         recorrer(opRaiz);
         cadenaDot = cadenaDot + "}";
         try {
 
-            archivoDot = new File("Graficas\\"+nombre + ".txt");
+            archivoDot = new File("Graficas\\" + nombre + ".txt");
             FileWriter archivo = new FileWriter(archivoDot);
             archivo.write(cadenaDot);
             archivo.close();
@@ -36,34 +36,33 @@ public class Grafica {
         //relacionar(opRaiz);
         //System.out.println("resultado= "+opRaiz.valor);
     }
-     
-    private void recorrer(Nodo raiz){
-        if(raiz.valor!=null){
-            String valor=raiz.valor;
-            valor=valor.replace("\"","\\\"");
-            cadenaDot = cadenaDot + "nodo" + raiz.hashCode() + "[label=\"" +valor+"  ["+raiz.etiqueta+"]" + " \", color=\"cyan\", style =\"filled\", shape=\"doublecircle\"]; \n";
-        }else{
-            cadenaDot = cadenaDot + "nodo" + raiz.hashCode() + "[label=\"" +raiz.etiqueta + " \", color=\"cyan\", style =\"filled\", shape=\"doublecircle\"]; \n";
+
+    private void recorrer(Nodo raiz) {
+        if (raiz.valor != null) {
+            String valor = raiz.valor;
+            valor = valor.replace("\"", "\\\"");
+            cadenaDot = cadenaDot + "nodo" + raiz.hashCode() + "[label=\"" + valor + "  [" + raiz.etiqueta + "]" + " \", color=\"cyan\", style =\"filled\", shape=\"doublecircle\"]; \n";
+        } else {
+            cadenaDot = cadenaDot + "nodo" + raiz.hashCode() + "[label=\"" + raiz.etiqueta + " \", color=\"cyan\", style =\"filled\", shape=\"doublecircle\"]; \n";
         }
-        
-                
+
         for (Nodo hijo : raiz.hijos) {
-           cadenaDot = cadenaDot + "\"nodo" + raiz.hashCode() + "\"-> \"nodo" + hijo.hashCode() + "\"" + "\n";
+            cadenaDot = cadenaDot + "\"nodo" + raiz.hashCode() + "\"-> \"nodo" + hijo.hashCode() + "\"" + "\n";
         }
-        
+
         for (Nodo hijo : raiz.hijos) {
             recorrer(hijo);
         }
     }
-     
-     private void pintar(String titulo) {
+
+    private void pintar(String titulo) {
 
         try {
 
             String dotPath = "C:\\Program Files (x86)\\Graphviz2.38\\bin\\dot.exe";
 
-            String fileInputPath = "Graficas\\"+titulo + ".txt";
-            String fileOutputPath = "Graficas\\"+titulo + ".jpg";
+            String fileInputPath = "Graficas\\" + titulo + ".txt";
+            String fileOutputPath = "Graficas\\" + titulo + ".jpg";
 
             String tParam = "-Tjpg";
             String tOParam = "-o";

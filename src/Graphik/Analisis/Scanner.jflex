@@ -2,7 +2,7 @@ package Graphik.Analisis;
 import java_cup.runtime.Symbol;
 
 %%
-%cupsym Simbolo
+%cupsym sym
 %class Lexico
 %cup
 %public
@@ -14,9 +14,8 @@ import java_cup.runtime.Symbol;
 
 //------------------------------------------------------------------------
 //EXPRESIONES REGULARES
-
-Comentario2 = "//" ([^\r\n])* \r|\n
-Comentario1 ="/"[*] [^*]+ [*]"/" | "/"[*] [*]+ "/"
+Comentario2 = "#" [^\r\n]* [^\r\n]
+Comentario1 = "#/" [^/] ~"/#" | "#/" "/"+ "#"
 
 entero =[0-9]+ 
 decimal =[0-9]+ "."? [0-9]*
@@ -35,10 +34,10 @@ bool=("verdadero"|"falso"|"1"|"0")
     //codigo de java
     String nombre;
     public void imprimir(String dato,String cadena){
-    	System.out.println(dato+" : "+cadena);
+    	//System.out.println(dato+" : "+cadena);
     }
     public void imprimir(String cadena){
-    	System.out.println(cadena+" soy reservada");
+    	//System.out.println(cadena+" soy reservada");
     }
 %}
 
@@ -47,96 +46,96 @@ bool=("verdadero"|"falso"|"1"|"0")
 
 
 //SIMBOLOS
-"+"              {imprimir(yytext(),"soy +");return new Symbol(Simbolo.mas,yycolumn,yyline,yytext());}     
-"-"              {imprimir(yytext(),"soy -");return new Symbol(Simbolo.menos,yycolumn,yyline,yytext());}     
-"*"              {imprimir(yytext(),"soy *");return new Symbol(Simbolo.mul,yycolumn,yyline,yytext());}     
-"/"              {imprimir(yytext(),"soy /");return new Symbol(Simbolo.div,yycolumn,yyline,yytext());}     
-"%"              {imprimir(yytext(),"soy %");return new Symbol(Simbolo.mod,yycolumn,yyline,yytext());}     
-"^"              {imprimir(yytext(),"soy ^");return new Symbol(Simbolo.pot,yycolumn,yyline,yytext());}
+"+"              {imprimir(yytext(),"soy +");return new Symbol(sym.mas,yycolumn,yyline,yytext());}     
+"-"              {imprimir(yytext(),"soy -");return new Symbol(sym.menos,yycolumn,yyline,yytext());}     
+"*"              {imprimir(yytext(),"soy *");return new Symbol(sym.mul,yycolumn,yyline,yytext());}     
+"/"              {imprimir(yytext(),"soy /");return new Symbol(sym.div,yycolumn,yyline,yytext());}     
+"%"              {imprimir(yytext(),"soy %");return new Symbol(sym.mod,yycolumn,yyline,yytext());}     
+"^"              {imprimir(yytext(),"soy ^");return new Symbol(sym.pot,yycolumn,yyline,yytext());}
 
 //SIMBOLOS DE OPERACIONES RELACIONALES
-">"              {imprimir(yytext(),"soy mayor");return new Symbol(Simbolo.mayor,yycolumn,yyline,yytext());} 
-"<"              {imprimir(yytext(),"soy menor");return new Symbol(Simbolo.menor,yycolumn,yyline,yytext());} 
-">="             {imprimir(yytext(),"soy mayorIgual");return new Symbol(Simbolo.mayorIgual,yycolumn,yyline,yytext());} 
-"<="             {imprimir(yytext(),"soy menorIgual");return new Symbol(Simbolo.menorIgual,yycolumn,yyline,yytext());} 
-"=="             {imprimir(yytext(),"soy igualIgual");return new Symbol(Simbolo.igualIgual,yycolumn,yyline,yytext());} 
-"!="             {imprimir(yytext(),"soy noIgual");return new Symbol(Simbolo.noIgual,yycolumn,yyline,yytext());} 
+">"              {imprimir(yytext(),"soy mayor");return new Symbol(sym.mayor,yycolumn,yyline,yytext());} 
+"<"              {imprimir(yytext(),"soy menor");return new Symbol(sym.menor,yycolumn,yyline,yytext());} 
+">="             {imprimir(yytext(),"soy mayorIgual");return new Symbol(sym.mayorIgual,yycolumn,yyline,yytext());} 
+"<="             {imprimir(yytext(),"soy menorIgual");return new Symbol(sym.menorIgual,yycolumn,yyline,yytext());} 
+"=="             {imprimir(yytext(),"soy igualIgual");return new Symbol(sym.igualIgual,yycolumn,yyline,yytext());} 
+"!="             {imprimir(yytext(),"soy noIgual");return new Symbol(sym.noIgual,yycolumn,yyline,yytext());} 
 
 //SIMBOLOS DE OPERACIONES LOGICAS
-"||"             {imprimir(yytext(),"soy or");return new Symbol(Simbolo.or,yycolumn,yyline,yytext());} 
-"&|"             {imprimir(yytext(),"soy xor");return new Symbol(Simbolo.xor,yycolumn,yyline,yytext());}
-"&&"             {imprimir(yytext(),"soy and");return new Symbol(Simbolo.and,yycolumn,yyline,yytext());}
-"!"              {imprimir(yytext(),"soy not");return new Symbol(Simbolo.not,yycolumn,yyline,yytext());}
+"||"             {imprimir(yytext(),"soy or");return new Symbol(sym.or,yycolumn,yyline,yytext());} 
+"&|"             {imprimir(yytext(),"soy xor");return new Symbol(sym.xor,yycolumn,yyline,yytext());}
+"&&"             {imprimir(yytext(),"soy and");return new Symbol(sym.and,yycolumn,yyline,yytext());}
+"!"              {imprimir(yytext(),"soy not");return new Symbol(sym.not,yycolumn,yyline,yytext());}
 
-"++"             {imprimir(yytext(),"soy aumento");return new Symbol(Simbolo.aumento,yycolumn,yyline,yytext());}    
-"--"             {imprimir(yytext(),"soy disminucion");return new Symbol(Simbolo.disminucion,yycolumn,yyline,yytext());}
-"="              {imprimir(yytext(),"soy igual");return new Symbol(Simbolo.igual,yycolumn,yyline,yytext());} 
+"++"             {imprimir(yytext(),"soy aumento");return new Symbol(sym.aumento,yycolumn,yyline,yytext());}    
+"--"             {imprimir(yytext(),"soy disminucion");return new Symbol(sym.disminucion,yycolumn,yyline,yytext());}
+"="              {imprimir(yytext(),"soy igual");return new Symbol(sym.igual,yycolumn,yyline,yytext());} 
 
-"."              {imprimir(yytext(),"soy punto");return new Symbol(Simbolo.punto,yycolumn,yyline,yytext());}  
-":"              {imprimir(yytext(),"soy dosPuntos");return new Symbol(Simbolo.dosPuntos,yycolumn,yyline,yytext());} 
-";"              {imprimir(yytext(),"soy puntocoma");return new Symbol(Simbolo.puntoComa,yycolumn,yyline,yytext());}  
-","              {imprimir(yytext(),"soy coma");return new Symbol(Simbolo.coma,yycolumn,yyline,yytext());}  
-"("              {imprimir(yytext(),"soy parenInicio");return new Symbol(Simbolo.parenInicio,yycolumn,yyline,yytext());}
-")"              {imprimir(yytext(),"soy parenFin");return new Symbol(Simbolo.parenFin,yycolumn,yyline,yytext());}
-"["              {imprimir(yytext(),"soy corInicio");return new Symbol(Simbolo.corInicio,yycolumn,yyline,yytext());}
-"]"              {imprimir(yytext(),"soy corFin");return new Symbol(Simbolo.corFin,yycolumn,yyline,yytext());}
+"."              {imprimir(yytext(),"soy punto");return new Symbol(sym.punto,yycolumn,yyline,yytext());}  
+":"              {imprimir(yytext(),"soy dosPuntos");return new Symbol(sym.dosPuntos,yycolumn,yyline,yytext());} 
+";"              {imprimir(yytext(),"soy puntocoma");return new Symbol(sym.puntoComa,yycolumn,yyline,yytext());}  
+","              {imprimir(yytext(),"soy coma");return new Symbol(sym.coma,yycolumn,yyline,yytext());}  
+"("              {imprimir(yytext(),"soy parenInicio");return new Symbol(sym.parenInicio,yycolumn,yyline,yytext());}
+")"              {imprimir(yytext(),"soy parenFin");return new Symbol(sym.parenFin,yycolumn,yyline,yytext());}
+"["              {imprimir(yytext(),"soy corInicio");return new Symbol(sym.corInicio,yycolumn,yyline,yytext());}
+"]"              {imprimir(yytext(),"soy corFin");return new Symbol(sym.corFin,yycolumn,yyline,yytext());}
 
-"{"              {imprimir(yytext(),"soy llaveInicio");return new Symbol(Simbolo.llaveInicio,yycolumn,yyline,yytext());}
-"}"              {imprimir(yytext(),"soy llaveFin");return new Symbol(Simbolo.llaveFin,yycolumn,yyline,yytext());}
-"¿"              {imprimir(yytext(),"soy inteInicio");return new Symbol(Simbolo.inteInicio,yycolumn,yyline,yytext());}
-"?"              {imprimir(yytext(),"soy inteFin");return new Symbol(Simbolo.inteFin,yycolumn,yyline,yytext());}
+"{"              {imprimir(yytext(),"soy llaveInicio");return new Symbol(sym.llaveInicio,yycolumn,yyline,yytext());}
+"}"              {imprimir(yytext(),"soy llaveFin");return new Symbol(sym.llaveFin,yycolumn,yyline,yytext());}
+"¿"              {imprimir(yytext(),"soy inteInicio");return new Symbol(sym.inteInicio,yycolumn,yyline,yytext());}
+"?"              {imprimir(yytext(),"soy inteFin");return new Symbol(sym.inteFin,yycolumn,yyline,yytext());}
 
 //PARABRAS RESERVADAS
-"als"            {imprimir(yytext());return new Symbol(Simbolo.als,yycolumn,yyline,yytext());}
-"var"            {imprimir(yytext());return new Symbol(Simbolo.var,yycolumn,yyline,yytext());}
-"importar"       {imprimir(yytext());return new Symbol(Simbolo.importar,yycolumn,yyline,yytext());}
-"entero"         {imprimir(yytext());return new Symbol(Simbolo.resEntero,yycolumn,yyline,yytext());}
-"decimal"        {imprimir(yytext());return new Symbol(Simbolo.resDecimal,yycolumn,yyline,yytext());}
-"caracter"       {imprimir(yytext());return new Symbol(Simbolo.resCaracter,yycolumn,yyline,yytext());}
-"cadena"         {imprimir(yytext());return new Symbol(Simbolo.resCadena,yycolumn,yyline,yytext());}
-"bool"           {imprimir(yytext());return new Symbol(Simbolo.resBool,yycolumn,yyline,yytext());}
-"vacio"          {imprimir(yytext());return new Symbol(Simbolo.vacio,yycolumn,yyline,yytext());}
-"publico"        {imprimir(yytext());return new Symbol(Simbolo.publico,yycolumn,yyline,yytext());}
-"protegido"      {imprimir(yytext());return new Symbol(Simbolo.protegido,yycolumn,yyline,yytext());}
-"privado"        {imprimir(yytext());return new Symbol(Simbolo.privado,yycolumn,yyline,yytext());}
-"hereda"         {imprimir(yytext());return new Symbol(Simbolo.hereda,yycolumn,yyline,yytext());}
-"nuevo"          {imprimir(yytext());return new Symbol(Simbolo.nuevo,yycolumn,yyline,yytext());}
-"retornar"       {imprimir(yytext());return new Symbol(Simbolo.retornar,yycolumn,yyline,yytext());}
-"llamar"         {imprimir(yytext());return new Symbol(Simbolo.llamar,yycolumn,yyline,yytext());}
-"inicio"         {imprimir(yytext());return new Symbol(Simbolo.inicio,yycolumn,yyline,yytext());}
-"incluir_HK"     {imprimir(yytext());return new Symbol(Simbolo.incluir_HK,yycolumn,yyline,yytext());}
-"llamarHK"       {imprimir(yytext());return new Symbol(Simbolo.llamarHK,yycolumn,yyline,yytext());}
+"als"            {imprimir(yytext());return new Symbol(sym.als,yycolumn,yyline,yytext());}
+"var"            {imprimir(yytext());return new Symbol(sym.var,yycolumn,yyline,yytext());}
+"importar"       {imprimir(yytext());return new Symbol(sym.importar,yycolumn,yyline,yytext());}
+"entero"         {imprimir(yytext());return new Symbol(sym.resEntero,yycolumn,yyline,yytext());}
+"decimal"        {imprimir(yytext());return new Symbol(sym.resDecimal,yycolumn,yyline,yytext());}
+"caracter"       {imprimir(yytext());return new Symbol(sym.resCaracter,yycolumn,yyline,yytext());}
+"cadena"         {imprimir(yytext());return new Symbol(sym.resCadena,yycolumn,yyline,yytext());}
+"bool"           {imprimir(yytext());return new Symbol(sym.resBool,yycolumn,yyline,yytext());}
+"vacio"          {imprimir(yytext());return new Symbol(sym.vacio,yycolumn,yyline,yytext());}
+"publico"        {imprimir(yytext());return new Symbol(sym.publico,yycolumn,yyline,yytext());}
+"protegido"      {imprimir(yytext());return new Symbol(sym.protegido,yycolumn,yyline,yytext());}
+"privado"        {imprimir(yytext());return new Symbol(sym.privado,yycolumn,yyline,yytext());}
+"hereda"         {imprimir(yytext());return new Symbol(sym.hereda,yycolumn,yyline,yytext());}
+"nuevo"          {imprimir(yytext());return new Symbol(sym.nuevo,yycolumn,yyline,yytext());}
+"retornar"       {imprimir(yytext());return new Symbol(sym.retornar,yycolumn,yyline,yytext());}
+"llamar"         {imprimir(yytext());return new Symbol(sym.llamar,yycolumn,yyline,yytext());}
+"inicio"         {imprimir(yytext());return new Symbol(sym.inicio,yycolumn,yyline,yytext());}
+"incluir_HK"     {imprimir(yytext());return new Symbol(sym.incluir_HK,yycolumn,yyline,yytext());}
+"llamarHK"       {imprimir(yytext());return new Symbol(sym.llamarHK,yycolumn,yyline,yytext());}
 
 
 //PALABRAS RESERVADAS DE SENTENCIAS DE CONTROL
-"Si"             {imprimir(yytext());return new Symbol(Simbolo.si,yycolumn,yyline,yytext());}
-"Sino"           {imprimir(yytext());return new Symbol(Simbolo.sino,yycolumn,yyline,yytext());}
-"Seleccion"      {imprimir(yytext());return new Symbol(Simbolo.seleccion,yycolumn,yyline,yytext());}
-"Caso"           {imprimir(yytext());return new Symbol(Simbolo.caso,yycolumn,yyline,yytext());}
-"Defecto"        {imprimir(yytext());return new Symbol(Simbolo.defecto,yycolumn,yyline,yytext());}
-"Para"           {imprimir(yytext());return new Symbol(Simbolo.para,yycolumn,yyline,yytext());}
-"Mientras"       {imprimir(yytext());return new Symbol(Simbolo.mientras,yycolumn,yyline,yytext());}
-"Hacer"          {imprimir(yytext());return new Symbol(Simbolo.hacer,yycolumn,yyline,yytext());}
-"Continuar"      {imprimir(yytext());return new Symbol(Simbolo.continuar,yycolumn,yyline,yytext());}
-"Terminar"       {imprimir(yytext());return new Symbol(Simbolo.terminar,yycolumn,yyline,yytext());}
-"graphikar_funcion" {imprimir(yytext());return new Symbol(Simbolo.graphikar_funcion,yycolumn,yyline,yytext());}
-"Datos"          {imprimir(yytext());return new Symbol(Simbolo.datos,yycolumn,yyline,yytext());}
-"Columna"        {imprimir(yytext());return new Symbol(Simbolo.columna,yycolumn,yyline,yytext());}
-"Procesar"       {imprimir(yytext());return new Symbol(Simbolo.procesar, yychar,yycolumn,yyline);}
-"Donde"          {imprimir(yytext());return new Symbol(Simbolo.donde,yycolumn,yyline,yytext());}
-"DondeCada"      {imprimir(yytext());return new Symbol(Simbolo.dondeCada,yycolumn,yyline,yytext());}
-"DondeTodo"      {imprimir(yytext());return new Symbol(Simbolo.dondeTodo,yycolumn,yyline,yytext());}
-"imprimir"       {imprimir(yytext());return new Symbol(Simbolo.imprimir,yycolumn,yyline,yytext());}
+"Si"             {imprimir(yytext());return new Symbol(sym.si,yycolumn,yyline,yytext());}
+"Sino"           {imprimir(yytext());return new Symbol(sym.sino,yycolumn,yyline,yytext());}
+"Seleccion"      {imprimir(yytext());return new Symbol(sym.seleccion,yycolumn,yyline,yytext());}
+"Caso"           {imprimir(yytext());return new Symbol(sym.caso,yycolumn,yyline,yytext());}
+"Defecto"        {imprimir(yytext());return new Symbol(sym.defecto,yycolumn,yyline,yytext());}
+"Para"           {imprimir(yytext());return new Symbol(sym.para,yycolumn,yyline,yytext());}
+"Mientras"       {imprimir(yytext());return new Symbol(sym.mientras,yycolumn,yyline,yytext());}
+"Hacer"          {imprimir(yytext());return new Symbol(sym.hacer,yycolumn,yyline,yytext());}
+"Continuar"      {imprimir(yytext());return new Symbol(sym.continuar,yycolumn,yyline,yytext());}
+"Terminar"       {imprimir(yytext());return new Symbol(sym.terminar,yycolumn,yyline,yytext());}
+"graphikar_funcion" {imprimir(yytext());return new Symbol(sym.graphikar_funcion,yycolumn,yyline,yytext());}
+"Datos"          {imprimir(yytext());return new Symbol(sym.datos,yycolumn,yyline,yytext());}
+"Columna"        {imprimir(yytext());return new Symbol(sym.columna,yycolumn,yyline,yytext());}
+"Procesar"       {imprimir(yytext());return new Symbol(sym.procesar, yychar,yycolumn,yyline);}
+"Donde"          {imprimir(yytext());return new Symbol(sym.donde,yycolumn,yyline,yytext());}
+"DondeCada"      {imprimir(yytext());return new Symbol(sym.dondeCada,yycolumn,yyline,yytext());}
+"DondeTodo"      {imprimir(yytext());return new Symbol(sym.dondeTodo,yycolumn,yyline,yytext());}
+"imprimir"       {imprimir(yytext());return new Symbol(sym.imprimir,yycolumn,yyline,yytext());}
 
 //RESERVADAS COMPUESTAS
-{idenImportar}   {imprimir(yytext());return new Symbol(Simbolo.idenImportar,yycolumn,yyline,yytext());}
+{idenImportar}   {imprimir(yytext());return new Symbol(sym.idenImportar,yycolumn,yyline,yytext());}
 
-{entero}         {imprimir(yytext(),"soy entero");return new Symbol(Simbolo.entero,yycolumn,yyline,yytext());}
-{decimal}        {imprimir(yytext(),"soy decimal");return new Symbol(Simbolo.decimal,yycolumn,yyline,yytext());}
-{cadena}         {imprimir(yytext(),"soy cadena");return new Symbol(Simbolo.cadena,yycolumn,yyline,yytext());}
-{bool}           {imprimir(yytext(),"soy bool");return new Symbol(Simbolo.bool,yycolumn,yyline,yytext());}
-{iden}           {imprimir(yytext(),"soy iden");return new Symbol(Simbolo.iden,yycolumn,yyline,yytext());}
-{caracter}       {imprimir(yytext(),"soy caracter");return new Symbol(Simbolo.caracter,yycolumn,yyline,yytext());}
+{entero}         {imprimir(yytext(),"soy entero");return new Symbol(sym.entero,yycolumn,yyline,yytext());}
+{decimal}        {imprimir(yytext(),"soy decimal");return new Symbol(sym.decimal,yycolumn,yyline,yytext());}
+{cadena}         {imprimir(yytext(),"soy cadena");return new Symbol(sym.cadena,yycolumn,yyline,yytext());}
+{bool}           {imprimir(yytext(),"soy bool");return new Symbol(sym.bool,yycolumn,yyline,yytext());}
+{iden}           {imprimir(yytext(),"soy iden");return new Symbol(sym.iden,yycolumn,yyline,yytext());}
+{caracter}       {imprimir(yytext(),"soy caracter");return new Symbol(sym.caracter,yycolumn,yyline,yytext());}
 
 /* COMENTARIOS */
 {Comentario2}    { /* Se ignoran */}

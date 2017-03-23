@@ -14,9 +14,10 @@ public class Boton extends JButton implements MouseListener {
 
     private Panel lblTitulo;
     private Inicio inicio;
+
     public Boton(Inicio inici, Panel lblTitulo) {
         this.lblTitulo = lblTitulo;
-        this.inicio=inici;
+        this.inicio = inici;
         int size = 16;
         setPreferredSize(new Dimension(size, size));
         setToolTipText("Cerrar Pestaña");
@@ -37,9 +38,9 @@ public class Boton extends JButton implements MouseListener {
                 int i = inicio.panelTab.indexOfTabComponent(Boton.this.lblTitulo);
                 if (i != -1) {
                     inicio.indicePestania--;
-                    inicio.listaPestania.remove((Editor)inicio.panelTab.getSelectedComponent());
+                    inicio.listaPestania.remove((Editor) inicio.panelTab.getSelectedComponent());
                     inicio.panelTab.remove(i);
-                    int a=0;
+                    int a = 0;
                 }
             }
         });
@@ -52,9 +53,9 @@ public class Boton extends JButton implements MouseListener {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g.create();
 
-            ImageIcon img = new ImageIcon(this.getClass().getResource("/Media/cerrar.png"));
-            g2.drawImage(img.getImage(), 1, 1, this);
-            g2.dispose();
+        ImageIcon img = new ImageIcon(this.getClass().getResource("/Media/cerrar.png"));
+        g2.drawImage(img.getImage(), 1, 1, this);
+        g2.dispose();
     }
 
     @Override

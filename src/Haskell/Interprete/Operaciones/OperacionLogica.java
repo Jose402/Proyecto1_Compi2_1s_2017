@@ -14,48 +14,49 @@ import Haskell.Interprete.TablaSimboloH;
  * @author Jose2
  */
 public class OperacionLogica {
-    
+
     private TablaSimboloH tabla;
     private OperacionRelacional opR;
-    public OperacionLogica(TablaSimboloH tabla){
-        this.tabla=tabla;
-        
+
+    public OperacionLogica(TablaSimboloH tabla) {
+        this.tabla = tabla;
+
     }
-    
-    public ResultadoH resolverLogica(Nodo raiz){
-        ResultadoH resultado1=null;
-        ResultadoH resultado2=null;
-        switch(raiz.etiqueta){
+
+    public ResultadoH resolverLogica(Nodo raiz) {
+        ResultadoH resultado1 = null;
+        ResultadoH resultado2 = null;
+        switch (raiz.etiqueta) {
             case ">":
             case ">=":
             case "<":
             case "<=":
             case "==":
             case "!=":
-                opR=new OperacionRelacional(tabla);
+                opR = new OperacionRelacional(tabla);
                 return opR.relacionar(raiz);
             case "&&":
             case "||":
-                resultado1=resolverLogica(raiz.hijos.get(0));
-                resultado2=resolverLogica(raiz.hijos.get(1));
+                resultado1 = resolverLogica(raiz.hijos.get(0));
+                resultado2 = resolverLogica(raiz.hijos.get(1));
         }
-        
-        switch(raiz.etiqueta){
+
+        switch (raiz.etiqueta) {
             case "&&":
-                if(resultado1.valor.equals("true")&&resultado2.valor.equals("true")){
-                    return new ResultadoH("bool","true");
-                }else{
-                    return new ResultadoH("bool","false");
+                if (resultado1.valor.equals("true") && resultado2.valor.equals("true")) {
+                    return new ResultadoH("bool", "true");
+                } else {
+                    return new ResultadoH("bool", "false");
                 }
             case "||":
-                if(resultado1.valor.equals("true")||resultado2.valor.equals("true")){
-                    return new ResultadoH("bool","true");
-                }else{
-                    return new ResultadoH("bool","false");
+                if (resultado1.valor.equals("true") || resultado2.valor.equals("true")) {
+                    return new ResultadoH("bool", "true");
+                } else {
+                    return new ResultadoH("bool", "false");
                 }
         }
-        
-        return new ResultadoH("-1","false");
+
+        return new ResultadoH("-1", "false");
     }
-    
+
 }

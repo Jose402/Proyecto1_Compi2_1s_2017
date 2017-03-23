@@ -19,18 +19,19 @@ import java.util.ArrayList;
  * @author Jose2
  */
 public class OperacionAritmetica {
-   
+
     private TablaSimboloH tabla;
     private OperacionNativa opN;
-    public OperacionAritmetica(TablaSimboloH tabla){
-        this.tabla=tabla;
+
+    public OperacionAritmetica(TablaSimboloH tabla) {
+        this.tabla = tabla;
     }
-    
-    public ResultadoH resolver(Nodo raiz){
-        ResultadoH resultado1=null;
-        ResultadoH resultado2=null;
-        
-        switch(raiz.etiqueta){
+
+    public ResultadoH resolver(Nodo raiz) {
+        ResultadoH resultado1 = null;
+        ResultadoH resultado2 = null;
+
+        switch (raiz.etiqueta) {
             case "+":
             case "-":
             case "*":
@@ -38,97 +39,97 @@ public class OperacionAritmetica {
             case "^":
             case "mod":
             case "sqrt":
-                resultado1=resolver(raiz.hijos.get(0));
-                resultado2=resolver(raiz.hijos.get(1));
+                resultado1 = resolver(raiz.hijos.get(0));
+                resultado2 = resolver(raiz.hijos.get(1));
                 break;
             case "unitario":
-                resultado1=resolver(raiz.hijos.get(0));
-                Double negativo=Double.parseDouble(resultado1.valor)*-1;
-                return new ResultadoH(resultado1.tipo,negativo+"");
+                resultado1 = resolver(raiz.hijos.get(0));
+                Double negativo = Double.parseDouble(resultado1.valor) * -1;
+                return new ResultadoH(resultado1.tipo, negativo + "");
             case "acceso":
-                SimboloH s=null;
-                if(raiz.hijos.get(0).etiqueta.equals("id")){
-                    String id=raiz.hijos.get(0).valor;
-                    s=tabla.getSimbolo(id);
-                }else{
-                    opN=new OperacionNativa(tabla);
-                    Lista lista=opN.operacionLista(raiz.hijos.get(0));
-                    s=new SimboloH("", lista);
+                SimboloH s = null;
+                if (raiz.hijos.get(0).etiqueta.equals("id")) {
+                    String id = raiz.hijos.get(0).valor;
+                    s = tabla.getSimbolo(id);
+                } else {
+                    opN = new OperacionNativa(tabla);
+                    Lista lista = opN.operacionLista(raiz.hijos.get(0));
+                    s = new SimboloH("", lista);
                 }
-                if(s!=null){
-                    Nodo valores=raiz.hijos.get(1);
-                    ArrayList<Integer> index=new ArrayList<>();
-                    for(Nodo nodo:valores.hijos){
-                        opN=new OperacionNativa(tabla);
-                        ResultadoH r=opN.operar(nodo);
-                        Double d=Double.parseDouble(r.valor);
+                if (s != null) {
+                    Nodo valores = raiz.hijos.get(1);
+                    ArrayList<Integer> index = new ArrayList<>();
+                    for (Nodo nodo : valores.hijos) {
+                        opN = new OperacionNativa(tabla);
+                        ResultadoH r = opN.operar(nodo);
+                        Double d = Double.parseDouble(r.valor);
                         index.add(d.intValue());
                     }
-                    ResultadoH acceso=s.lista.getValor(index);
+                    ResultadoH acceso = s.lista.getValor(index);
                     return acceso;
-                }else{
+                } else {
                     System.out.println("Error semantico,la lista no existe");
                 }
             case "id":
-                if(tabla.existe(raiz.valor)){
-                SimboloH variable=tabla.getSimbolo(raiz.valor);
-                if(variable.lista!=null){
-                    return new ResultadoH(variable.tipo,variable.lista);
-                }else{
-                    return new ResultadoH(variable.tipo,variable.valor);
-                }
-                }else{
+                if (tabla.existe(raiz.valor)) {
+                    SimboloH variable = tabla.getSimbolo(raiz.valor);
+                    if (variable.lista != null) {
+                        return new ResultadoH(variable.tipo, variable.lista);
+                    } else {
+                        return new ResultadoH(variable.tipo, variable.valor);
+                    }
+                } else {
                     System.out.println("Error semantico, la varibale no existe!!!");
                 }
             case "numero":
-                return new ResultadoH(raiz.etiqueta,raiz.valor);
+                return new ResultadoH(raiz.etiqueta, raiz.valor);
             case "cadena":
             case "caracter":
-                Lista l1=new Lista(raiz,tabla);
-                return  new ResultadoH(raiz.etiqueta,l1);
+                Lista l1 = new Lista(raiz, tabla);
+                return new ResultadoH(raiz.etiqueta, l1);
             case "llamada":
-                FuncionH funcion=Inicio.interprete.llamada(raiz);
-                if(funcion.retorno!=null){
-                    return new ResultadoH(funcion.tipo,funcion.retorno.valor);
-                }else{
-                    return new ResultadoH("-1","0");
+                FuncionH funcion = Inicio.interprete.llamada(raiz);
+                if (funcion.retorno != null) {
+                    return new ResultadoH(funcion.tipo, funcion.retorno.valor);
+                } else {
+                    return new ResultadoH("-1", "0");
                 }
             default:
-                OperacionNativa opN=new OperacionNativa(tabla);
-                ResultadoH r=opN.operar(raiz);
-                return new ResultadoH(r.tipo,r.valor);
+                OperacionNativa opN = new OperacionNativa(tabla);
+                ResultadoH r = opN.operar(raiz);
+                return new ResultadoH(r.tipo, r.valor);
         }
 
-        Boolean estado=false;
-        Double valor1=0.0;
-        Double valor2=0.0;
-        try{
-            valor1=Double.parseDouble(resultado1.valor);
-            valor2=Double.parseDouble(resultado2.valor);
-            estado=true;
-        }catch(Exception e){
-            
+        Boolean estado = false;
+        Double valor1 = 0.0;
+        Double valor2 = 0.0;
+        try {
+            valor1 = Double.parseDouble(resultado1.valor);
+            valor2 = Double.parseDouble(resultado2.valor);
+            estado = true;
+        } catch (Exception e) {
+
         }
-        if(estado){
-            switch(raiz.etiqueta){
+        if (estado) {
+            switch (raiz.etiqueta) {
                 case "+":
-                    return new ResultadoH(resultado1.tipo,(valor1+valor2)+"");
+                    return new ResultadoH(resultado1.tipo, (valor1 + valor2) + "");
                 case "-":
-                    return new ResultadoH(resultado1.tipo,(valor1-valor2)+""); 
+                    return new ResultadoH(resultado1.tipo, (valor1 - valor2) + "");
                 case "*":
-                    return new ResultadoH(resultado1.tipo,(valor1*valor2)+"");
+                    return new ResultadoH(resultado1.tipo, (valor1 * valor2) + "");
                 case "/":
-                    return new ResultadoH(resultado1.tipo,(valor1/valor2)+"");
+                    return new ResultadoH(resultado1.tipo, (valor1 / valor2) + "");
                 case "^":
-                    return new ResultadoH(resultado1.tipo,(Math.pow(valor1,valor2))+"");
+                    return new ResultadoH(resultado1.tipo, (Math.pow(valor1, valor2)) + "");
                 case "mod":
-                    return new ResultadoH(resultado1.tipo,(valor1%valor2)+"");
+                    return new ResultadoH(resultado1.tipo, (valor1 % valor2) + "");
                 case "sqrt"://aun falta implementarla
-                    return new ResultadoH(resultado1.tipo,(Math.pow(valor2,1/valor1))+"");
+                    return new ResultadoH(resultado1.tipo, (Math.pow(valor2, 1 / valor1)) + "");
             }
-        }else{
+        } else {
             System.out.println("Error semantico,los tipos de datos son diferentes");
         }
-        return new ResultadoH("-1","0");
+        return new ResultadoH("-1", "0");
     }
 }

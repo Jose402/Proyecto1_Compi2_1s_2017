@@ -10,14 +10,16 @@ package Reporte;
  * @author Jose2
  */
 public class ErrorP {
+
     public String tipo;
     public int linea;
     public int columna;
     public String descripcion;
-    public ErrorP(String tipo,int linea,int columna,String descripcion){
-        this.tipo=tipo;
-        this.linea=linea;
-        this.columna=columna;
-        this.descripcion=descripcion;
+
+    public ErrorP(String tipo, int linea, int columna, String descripcion) {
+        this.tipo = tipo;
+        this.linea = linea;
+        this.columna = columna;
+        this.descripcion = descripcion;
     }
 }

@@ -10,5 +10,35 @@ package Graphik.Compilador;
  * @author Jose2
  */
 public class SimboloG {
-    
+
+    public String nombre;
+    public String tipo;
+    public String visibilidad;
+    public Object valor;
+    public boolean inicializado = false;
+    public boolean esArreglo = false;
+    //public boolean seHereda = false;
+
+    public SimboloG(String tipo, String nombre, String visibilidad, Object valor) {
+        if (valor != null) {
+            if (valor.getClass().getSimpleName().equalsIgnoreCase("arreglo")) {
+                esArreglo = true;
+            }
+        }
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.visibilidad = visibilidad;
+        this.valor = valor;
+    }
+
+    public SimboloG(String tipo, String nombre, Object valor) {
+        if (valor != null) {
+            if (valor.getClass().getSimpleName().equalsIgnoreCase("arreglo")) {
+                esArreglo = true;
+            }
+        }
+        this.tipo = tipo;
+        this.nombre = nombre;
+        this.valor = valor;
+    }
 }

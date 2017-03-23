@@ -5,15 +5,15 @@
  */
 package Interfaz;
 
-
 import javax.swing.*;
 
 public class Panel extends JPanel {
 
     private JTabbedPane panelTab;
+
     public Panel(Inicio inicio) {
         if (inicio.panelTab != null) {
-            this.panelTab=inicio.panelTab;
+            this.panelTab = inicio.panelTab;
             setOpaque(false);
 
             JLabel titulo = new JLabel() {

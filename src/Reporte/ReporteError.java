@@ -12,14 +12,17 @@ import java.util.ArrayList;
  * @author Jose2
  */
 public class ReporteError {
+
     private ArrayList<ErrorP> listaErrores;
-    
-    public ReporteError(){
-        listaErrores=new ArrayList<>();
+
+    public ReporteError() {
+        listaErrores = new ArrayList<>();
     }
-    
-    public void agregar(String tipo,int linea,int columna,String descripcion){
-        ErrorP error=new ErrorP(tipo, linea, columna, descripcion);
+
+    public void agregar(String tipo, int linea, int columna, String descripcion) {
+        ErrorP error = new ErrorP(tipo, linea, columna, descripcion);
+        String strError = tipo + "  linea:" + linea + "  columna:" + columna + "  " + descripcion;
+        System.err.println(strError);
         listaErrores.add(error);
     }
 }

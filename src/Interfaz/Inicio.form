@@ -155,11 +155,11 @@
                       <Component id="btnTablaError" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="panelTab" pref="446" max="32767" attributes="0"/>
+                  <Component id="panelTab" min="-2" pref="402" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="scrollPanel" min="-2" max="-2" attributes="0"/>
+                  <Component id="scrollPanel" pref="161" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="lblPosicion" min="-2" max="-2" attributes="0"/>
+                  <Component id="lblPosicion" min="-2" pref="13" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -195,6 +195,9 @@
               <Events>
                 <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtConsolaKeyPressed"/>
               </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>

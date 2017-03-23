@@ -5,20 +5,16 @@
  */
 package Interfaz;
 
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Utilities;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
-
 
 /**
  *
@@ -29,11 +25,11 @@ public class Editor extends JPanel {
     //private final JTextPane txtArea;
     private RSyntaxTextArea txtArea;
     public File file;
-    
-    public Editor(String texto,String nombre,File file) {
-         
-        this.file = file;        
-        
+
+    public Editor(String texto, String nombre, File file) {
+
+        this.file = file;
+
         txtArea = new RSyntaxTextArea(20, 60);
         txtArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         txtArea.setText(texto);
@@ -46,7 +42,7 @@ public class Editor extends JPanel {
         setLayout(new BorderLayout());
         RTextScrollPane rtsp = new RTextScrollPane(txtArea);
         rtsp.setViewportBorder(BorderFactory.createEmptyBorder());
-        add(rtsp);  
+        add(rtsp);
         rtsp.setViewportView(txtArea);
     }
 
@@ -62,8 +58,7 @@ public class Editor extends JPanel {
         return txtArea;
     }
 
-    
-    private void actualizarLinea(){
+    private void actualizarLinea() {
         txtArea.addMouseListener(new java.awt.event.MouseListener() {
             @Override
             public void mouseClicked(MouseEvent me) {
@@ -71,7 +66,7 @@ public class Editor extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent me) {
-           }
+            }
 
             @Override
             public void mouseReleased(MouseEvent me) {
@@ -80,7 +75,7 @@ public class Editor extends JPanel {
 
             @Override
             public void mouseEntered(MouseEvent me) {
-                }
+            }
 
             @Override
             public void mouseExited(MouseEvent me) {
@@ -89,36 +84,35 @@ public class Editor extends JPanel {
         txtArea.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyReleased(java.awt.event.KeyEvent evt) {
-         actualizarLabel();
+                actualizarLabel();
             }
         });
     }
 
-    
-    private void actualizarLabel(){
+    private void actualizarLabel() {
         try {
             int caretPos = txtArea.getCaretPosition();
             int offset = Utilities.getRowStart(txtArea, caretPos);
             int columna = caretPos - offset + 1;
-            int linea=txtArea.getLineOfOffset(caretPos);
-            linea+=1;
-            Inicio.lblPosicion.setText("Linea:"+linea+" Columna:"+columna);
+            int linea = txtArea.getLineOfOffset(caretPos);
+            linea += 1;
+            Inicio.lblPosicion.setText("Linea:" + linea + " Columna:" + columna);
         } catch (BadLocationException ex) {
             System.err.println(ex.getMessage());
         }
     }
-    
-    public String getTextLine(){
+
+    public String getTextLine() {
         try {
-            String cadena="";
+            String cadena = "";
             int caretPos = txtArea.getCaretPosition();
-            int linea=txtArea.getLineOfOffset(caretPos);
+            int linea = txtArea.getLineOfOffset(caretPos);
             int offset = Utilities.getRowStart(txtArea, caretPos);
             int columna = caretPos - offset;
-            cadena=txtArea.getText(linea,columna);
+            cadena = txtArea.getText(linea, columna);
             return cadena;
         } catch (BadLocationException ex) {
-            
+
         }
         return "";
     }
