@@ -8,18 +8,30 @@ parser code
 {:
     /**Metodo al que se llama automáticamente ante algún error sintactico.*/
     public void syntax_error(Symbol s){
-        System.out.println("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador "
-        +s.value + " no reconocido." );
+       /* System.err.println("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador "
+        +s.value + " no reconocido." );*/
+        Inicio.reporteError.agregar("Sintactico",s.right+1,s.left+1,"Identificador "+s.value+" no reconocido");
     }
 
     /**Metodo al que se llama en el momento en que ya no es posible una recuperación de
     errores.*/
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
-        System.out.println("Error en la Línea " + (s.right+1)+ "Columna "+(s.left+1)+". Identificador " +
-        s.value + " no reconocido.");
+        /*System.err.println("Error en la Línea " + (s.right+1)+ "Columna "+(s.left+1)+". Identificador " +
+        s.value + " no reconocido.");*/
+        Inicio.reporteError.agregar("Sintactico",s.right+1,s.left+1,"Identificador "+s.value+" no reconocido");
+    
+    }
+
+    public Nodo getRaiz(){
+        return action_obj.raiz;
     }
 :}
 
+
+action code {:
+    Nodo raiz=null;
+    
+:}
 
 /*terminales reservados*/
 terminal String als,var,importar,resEntero,resDecimal,resCaracter,resCadena,resBool,vacio;
@@ -71,6 +83,11 @@ non terminal Nodo GRAFICARFUNCION;
 
 non terminal Nodo LLAMARHK,LLAMARGK;
 
+non terminal Nodo CONSULTASTAR,CONSULTAS,CONSULTA,PROCESAR,FILTRO;
+non terminal Nodo DONDE,DONDECADA,DONDETODO,COLUMNA,FILTROS;
+
+non terminal Nodo ENCABEZADO,ENCABEZADOS;
+
 /* Precedences */
 precedence left mas, menos;
 precedence left mul, div,mod;
@@ -85,38 +102,41 @@ precedence right not;
 /* ­­­­­­­­­­­­­­ Declaración de la gramática  ­­­­­­­­­­­ */
 start with INICIO; // start with sirve para indicarle al parser con que produccion empezar
 
-INICIO::=IMPORTACIONES:importar INCLUIRHASKELS:incluir CLASESALS:clasesAls {:
-        RESULT=new Nodo("encabezado",importar.linea-1,importar.columna-1);
-        RESULT.add(importar);
-        RESULT.add(incluir);
+INICIO::=ENCABEZADOS:enca CLASESALS:clasesAls {:
+        RESULT=new Nodo("archivo",clasesAls.linea-1,clasesAls.columna-1);
+        RESULT.add(enca);
         RESULT.add(clasesAls);
-        Inicio.raiz=RESULT;
+        raiz=RESULT;
+    :}|CLASESALS:clasesAls {:
+        RESULT=new Nodo("archivo",clasesAls.linea-1,clasesAls.columna-1);
+        Nodo enca=new Nodo("encabezado",0,0);
+        RESULT.add(enca);
+        RESULT.add(clasesAls);
+        raiz=RESULT;
     :};
 
-IMPORTACIONES::=IMPORTACION:nodo {:RESULT=nodo;:}
-            |{:RESULT=new Nodo("importaciones",0,0);:};
+ENCABEZADOS::=ENCABEZADOS:lista ENCABEZADO:val 
+            {:
+                RESULT=lista;
+                RESULT.add(val);
+            :}
+            |ENCABEZADO:val
+            {:
+                RESULT=new Nodo("encabezado",val.linea-1,val.columna-1);
+                RESULT.add(val);
+            :};
 
-IMPORTACION::= IMPORTACION:nodo importar idenImportar:id inteFin {:RESULT=nodo;
-                Nodo importar=new Nodo("importar",id,idright,idleft);
-                RESULT.add(importar);
-                :}
-            |importar:im idenImportar:id inteFin {:
-                Nodo importar=new Nodo("importar",id,idright,idleft);RESULT=new Nodo("importaciones",imright,imleft);
-                RESULT.add(importar);
+ENCABEZADO::=IMPORTACION:val {:RESULT=val;:}
+            |INCLUIRHASKEL:val {:RESULT=val;:}
+            |error inteFin ENCABEZADO:val {:RESULT=val;:};
+
+IMPORTACION::=importar idenImportar:id inteFin {:
+                RESULT=new Nodo("importar",id,idright,idleft);
                 :};
 
-INCLUIRHASKELS::=INCLUIRHASKEL:nodo {:RESULT=nodo;:}
-            |{:RESULT=new Nodo("incluidos",0,0);:};
-
-INCLUIRHASKEL::= INCLUIRHASKEL:nodo incluir_HK iden:id inteFin{:RESULT=nodo;
-                Nodo importar=new Nodo("incluir",id,idright,idleft);
-                RESULT.add(importar);
-                :}
-            |incluir_HK:in iden:id inteFin{:
-                Nodo importar=new Nodo("incluir",id,idright,idleft);RESULT=new Nodo("incluidos",inright,inleft);
-                RESULT.add(importar);
-                :}
-            |error;
+INCLUIRHASKEL::=incluir_HK iden:id inteFin{:
+                RESULT=new Nodo("incluir",id,idright,idleft);
+                :};
 
 CLASESALS::=CLASESALS:lista ALS:als {:RESULT=lista;
         RESULT.add(als);
@@ -137,27 +157,28 @@ ALS::= als iden:id VISIBILIDAD:visi llaveInicio CUERPOALS:cuerpo llaveFin {:
             RESULT.add(hereda);
             RESULT.add(visi);
             RESULT.add(cuerpo);
-            :};         
+            :}
+    |error als ALS:als {:RESULT=als;:};         
 
 
-VISIBILIDAD::= dosPuntos publico:cad {:RESULT=new Nodo("visibilidad",cad,cadright,cadleft);:}
-            |dosPuntos protegido:cad {:RESULT=new Nodo("visibilidad",cad,cadright,cadleft);:}
-            |dosPuntos privado:cad {:RESULT=new Nodo("visibilidad",cad,cadright,cadleft);:}
+VISIBILIDAD::= dosPuntos publico:cad {:RESULT=new Nodo("visibilidad","publico",cadright,cadleft);:}
+            |dosPuntos protegido:cad {:RESULT=new Nodo("visibilidad","protegido",cadright,cadleft);:}
+            |dosPuntos privado:cad {:RESULT=new Nodo("visibilidad","privado",cadright,cadleft);:}
             |{:RESULT=new Nodo("visibilidad","publico");:};
 
-TIPODATO::=resEntero:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:}
-        |resDecimal:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:}
-        |resCaracter:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:}
-        |resCadena:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:}
-        |resBool:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:};
+TIPODATO::=resEntero:dato {:RESULT=new Nodo("tipo","entero",datoright,datoleft);:}
+        |resDecimal:dato {:RESULT=new Nodo("tipo","decimal",datoright,datoleft);:}
+        |resCaracter:dato {:RESULT=new Nodo("tipo","caracter",datoright,datoleft);:}
+        |resCadena:dato {:RESULT=new Nodo("tipo","cadena",datoright,datoleft);:}
+        |resBool:dato {:RESULT=new Nodo("tipo","bool",datoright,datoleft);:};
 
-TIPOMETODO::=resEntero:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:}
-        |resDecimal:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:}
-        |resCaracter:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:}
-        |resCadena:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:}
-        |resBool:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:}
+TIPOMETODO::=resEntero:dato {:RESULT=new Nodo("tipo","entero",datoright,datoleft);:}
+        |resDecimal:dato {:RESULT=new Nodo("tipo","decimal",datoright,datoleft);:}
+        |resCaracter:dato {:RESULT=new Nodo("tipo","caracter",datoright,datoleft);:}
+        |resCadena:dato {:RESULT=new Nodo("tipo","cadena",datoright,datoleft);:}
+        |resBool:dato {:RESULT=new Nodo("tipo","bool",datoright,datoleft);:}
         |iden:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:}
-        |vacio:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:};       
+        |vacio:dato {:RESULT=new Nodo("tipo","vacio",datoright,datoleft);:};       
 
 //los constructores no llevan parametros
 //Declaracion de objetos 
@@ -300,7 +321,8 @@ CUERPOS::=CUERPOS:cuerpos CUERPO:cuerpo {:RESULT=cuerpos;
 CUERPO::=ATRIBUTOVAR:atributo {:RESULT=atributo;:} 
         |METODO:metodo {:RESULT=metodo;:}
         |ATRIBUTOALS:atributoAls {:RESULT=atributoAls;:}
-        |ATRIBUTOVARAR:arregloVar {:RESULT=arregloVar;:};
+        |ATRIBUTOVARAR:arregloVar {:RESULT=arregloVar;:}
+        |error inteFin CUERPO:cuerpo {:RESULT=cuerpo;:};
 
 CUERPOALS::=CUERPOS:cuerpos {:RESULT=cuerpos;:}
     |{:RESULT=new Nodo("cuerpo",0,0);:};
@@ -319,7 +341,8 @@ EXPA::=EXPA:d1 mas:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1
     |ACCESO:id1 {:RESULT=id1;:}
     |LLAMARHK:id1 {:RESULT=id1;:}
     |LLAMARGK:id1 {:RESULT=id1;:}
-    |SIMPLIFICADA:val {:RESULT=val;:};
+    |SIMPLIFICADA:val {:RESULT=val;:}
+    |COLUMNA:val {:RESULT=val;:};
 
 EXPR::=EXPA:d1 igualIgual:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
     |EXPA:d1 mayor:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
@@ -354,7 +377,7 @@ METODO::=TIPOMETODO:tipo iden:id parenInicio PARAMETROSSTAR:para parenFin VISIBI
         RESULT=new Nodo("inicio","inicio",varight,valeft);
         RESULT.add(sent);
         :}
-        |vacio datos:va parenInicio parenFin llaveInicio SENTENCIAS:sent llaveFin {:
+        |vacio datos:va parenInicio parenFin llaveInicio CONSULTASTAR:sent llaveFin {:
         RESULT=new Nodo("datos","datos",varight,valeft);
         RESULT.add(sent);
         :};
@@ -374,11 +397,11 @@ PARAMETROS::=PARAMETROS:lista coma PARAMETRO:par {:RESULT=lista;
 TIPODATO2::=TIPODATO:tipo {:RESULT=tipo;:}
         |iden:dato {:RESULT=new Nodo("tipo",dato,datoright,datoleft);:};
 
-PARAMETRO::=var:var TIPODATO2:tipo iden:id {:
+PARAMETRO::=TIPODATO2:tipo iden:id {:
     RESULT=new Nodo("parametro",id,idright,idleft);
     RESULT.add(tipo);
     :}
-    |var TIPODATO2:tipo iden:id INDICES2:dim {:
+    |TIPODATO2:tipo iden:id INDICES2:dim {:
     RESULT=new Nodo("parametroAr",id,idright,idleft);
     RESULT.add(tipo);
     RESULT.add(dim);
@@ -434,7 +457,8 @@ SENTENCIA::=LLAMARHK:sent inteFin {:RESULT=sent;:}
         |TERMINAR:sent inteFin {:RESULT=sent;:}
         |CONTINUAR:sent inteFin {:RESULT=sent;:}
         |GRAFICARFUNCION:sent inteFin {:RESULT=sent;:}
-        |IMPRIMIR:sent inteFin {:RESULT=sent;:};
+        |IMPRIMIR:sent inteFin {:RESULT=sent;:}
+        |error inteFin SENTENCIA:sent {:RESULT=sent;:};
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //----------------------------------------------------------------
@@ -584,7 +608,7 @@ SIMPLIFICADA::= EXPA:exp aumento {:RESULT=new Nodo("++",exp.linea-1,exp.columna-
             RESULT.add(exp);
             :};
 
-PARA::=para:para parenInicio VARIABLEPARA:var puntoComa EXPL:exp puntoComa SIMPLIFICADA:op parenFin llaveInicio SENTENCIAS:sent llaveFin {:
+PARA::=para:para parenInicio VARIABLEPARA:var dosPuntos EXPL:exp dosPuntos SIMPLIFICADA:op parenFin llaveInicio SENTENCIAS:sent llaveFin {:
     RESULT=new Nodo("para",pararight,paraleft);
     RESULT.add(var);
     RESULT.add(exp);
@@ -654,7 +678,16 @@ LLAMARHK::=llamarHK iden:id parenInicio VALORPARAMETROS:lista parenFin {:
             RESULT.add(n1);
             :};
 
-LLAMARGK::=llamar ACCESO:acc {:RESULT=acc;:};
+LLAMARGK::=llamar ACCESO:lista punto LLAMADAMETODO:val 
+        {:
+            RESULT=lista;
+            lista.hijos.add(val);
+        :}
+        |llamar  LLAMADAMETODO:val
+        {:
+            RESULT=new Nodo("acceso",val.linea-1,val.columna-1);  
+            RESULT.add(val);
+        :}; 
 
 
 ACCESO::=ACCESO:lista punto ACCESOVAR:acc {:RESULT=lista;
@@ -671,6 +704,11 @@ LLAMADAMETODO::=iden:id parenInicio VALORPARAMETROS:lista parenFin {:
             RESULT.add(lista);
             :}
             |iden:id parenInicio parenFin {:
+            RESULT=new Nodo("llamadaMetodo",id,idright,idleft);
+            Nodo n1=new Nodo("valorParametros",0,0);
+            RESULT.add(n1);
+            :}
+            |datos:id parenInicio parenFin {:
             RESULT=new Nodo("llamadaMetodo",id,idright,idleft);
             Nodo n1=new Nodo("valorParametros",0,0);
             RESULT.add(n1);
@@ -692,11 +730,91 @@ ACCESOAR::=iden:id INDICES:lista {:
 
 
 
-
-
-
-
-
-
-
 //------------------------SENTENCIAS DE FUNCION DATOS------------------
+COLUMNA::= columna:c parenInicio EXPL:exp parenFin {:
+    RESULT=new Nodo("columna",cright,cleft);
+    RESULT.add(exp);
+    :};
+
+
+CONSULTASTAR::=CONSULTAS:lista {:
+            RESULT=lista;
+            :}
+            |{:RESULT=new Nodo("consultas",0,0);:};
+
+CONSULTAS::=CONSULTAS:lista CONSULTA:val 
+        {:
+            RESULT=lista;
+            for(int i=0;i<val.hijos.size();i++){
+                lista.add(val.hijos.get(i));
+            }
+        :}
+        |CONSULTA:val 
+        {:
+            RESULT=new Nodo("consultas",val.linea-1,val.columna-1);
+            RESULT.hijos=val.hijos;
+        :};
+
+CONSULTA::=PROCESAR:val FILTROS:fil 
+        {:
+            RESULT=new Nodo("consulta",val.linea-1,val.columna-1);
+            RESULT.add(val);
+            for(int i=0;i<fil.hijos.size();i++){
+                RESULT.add(fil.hijos.get(i));
+            }
+        :}
+        |PROCESAR:val 
+        {:
+            RESULT=new Nodo("consulta",val.linea-1,val.columna-1);
+            RESULT.add(val);
+        :}
+        |error inteFin CONSULTA:con {:RESULT=con;:};
+
+PROCESAR::=procesar:p igual EXPL:exp inteFin
+        {:
+            RESULT=new Nodo("procesar",pright,pleft);
+            RESULT.add(exp);
+        :};
+
+FILTROS::=FILTROS:lista FILTRO:f 
+        {:
+            RESULT=lista;
+            RESULT.add(f);
+        :}
+        |FILTRO:f
+        {:
+            RESULT=new Nodo("filtros",fright,fleft);
+            RESULT.add(f);
+        :};
+
+FILTRO::=DONDE:val inteFin 
+    {:
+        RESULT=val;
+    :}
+    |DONDECADA:val inteFin 
+    {:
+        RESULT=val;
+    :}
+    |DONDETODO:val inteFin 
+    {:
+        RESULT=val;
+    :};
+
+DONDE::=donde:d parenInicio EXPL:exp1 parenFin igual EXPL:exp2
+        {:
+            RESULT=new Nodo("donde",dright,dleft);
+            RESULT.add(exp1);
+            RESULT.add(exp2);
+        :};
+
+DONDECADA::=dondeCada:d parenInicio EXPL:exp parenFin
+        {:
+            RESULT=new Nodo("dondeCada",dright,dleft);
+            RESULT.add(exp);
+        :};
+
+DONDETODO::=dondeTodo:d parenInicio EXPL:exp parenFin 
+        {:
+            RESULT=new Nodo("dondeTodo",dright,dleft);
+            RESULT.add(exp);
+        :};

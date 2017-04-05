@@ -7,6 +7,7 @@ package Graphik.Compilador;
 
 import Ast.Nodo;
 import Graphik.Compilador.Operaciones.OperacionLogicaG;
+import Graphik.Compilador.Sentencias.Casteo;
 import Interfaz.Inicio;
 import java.util.ArrayList;
 
@@ -123,11 +124,10 @@ public class Arreglo {
 
         for (Nodo hijo : val) {
             ResultadoG resultado = opL.operar(hijo);
-            if (resultado.tipo.equalsIgnoreCase(tipo)) {
+            Casteo casteo = new Casteo();
+            resultado = casteo.castear(hijo, tipo, resultado);
+            if (resultado != null) {
                 datos.add(resultado.valor);
-            } else {
-                Inicio.reporteError.agregar("Semantico", hijo.linea, hijo.columna, "El tipo de dato del valor en la casilla es diferente al del arreglo");
-                estado = false;
             }
         }
 
@@ -139,7 +139,7 @@ public class Arreglo {
 
     public Object getValor(ArrayList<Integer> indices) {
         int indice = getIndice(indices);
-        if ((indice + 1) <= datos.size()) {
+        if ((indice + 1) <= datos.size() && indice >= 0) {
             return datos.get(indice);
         } else {
             //indice incorrecto
@@ -149,7 +149,7 @@ public class Arreglo {
 
     public boolean setValor(ArrayList<Integer> indices, ResultadoG dato) {
         int indice = getIndice(indices);
-        if ((indice + 1) <= datos.size()) {
+        if ((indice + 1) <= datos.size() && indice >= 0) {
             datos.set(indice, dato.valor);
             return true;
         }
@@ -177,4 +177,5 @@ public class Arreglo {
         }
         return indice;
     }
+
 }

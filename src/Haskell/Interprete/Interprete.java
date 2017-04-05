@@ -8,6 +8,7 @@ package Haskell.Interprete;
 import Ast.Nodo;
 import Haskell.Interprete.Operaciones.*;
 import Haskell.Interprete.Sentencias.*;
+import Interfaz.Inicio;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -18,14 +19,19 @@ import java.util.Stack;
 public class Interprete {
 
     private TablaSimboloH tabla;
-    private ArrayList<FuncionH> funciones;
+    public ArrayList<FuncionH> funciones;
     private Stack<FuncionH> pilaFunciones;
     private Stack<TablaSimboloH> pilaTablas;
     private FuncionH funcionActual;
     private OperacionNativa opN;
     private OperacionLogica opL;
 
-    public Interprete(Nodo raiz) {
+    public String contenido;
+    public String archivo;
+
+    public Interprete(Nodo raiz, String archivo, String contenido) {
+        this.contenido = contenido;
+        this.archivo = archivo;
         funciones = new ArrayList<>();
         tabla = new TablaSimboloH();
         pilaFunciones = new Stack<>();
@@ -35,21 +41,21 @@ public class Interprete {
 
     private void guardarMetodos(Nodo raiz) {
         for (Nodo hijo : raiz.hijos) {
-            FuncionH funcion = new FuncionH(hijo.valor, hijo);
-            funciones.add(funcion);
-        }
-    }
-
-    public Boolean existeFuncion(String id) {
-        for (FuncionH funcion : funciones) {
-            if (id.equalsIgnoreCase(funcion.id)) {
-                return true;
+            FuncionH existe = existeFuncion(hijo.valor);
+            if (existe == null) {
+                FuncionH funcion = new FuncionH(hijo.valor, hijo);
+                funciones.add(funcion);
+            } else {
+                funciones.remove(existe);
+                FuncionH funcion = new FuncionH(hijo.valor, hijo);
+                funciones.add(funcion);
+                //Inicio.reporteError2.agregar("Semantico", hijo.linea, hijo.columna, "Ya existe una funcion con el nombre " + hijo.valor,archivo);
             }
+
         }
-        return false;
     }
 
-    private FuncionH buscarFuncion(String id) {
+    public FuncionH existeFuncion(String id) {
         for (FuncionH funcion : funciones) {
             if (id.equalsIgnoreCase(funcion.id)) {
                 return funcion;
@@ -58,20 +64,35 @@ public class Interprete {
         return null;
     }
 
+    private FuncionH buscarFuncion(String id) {
+        for (FuncionH funcion : funciones) {
+            if (id.equalsIgnoreCase(funcion.id)) {
+                return funcion;
+            }
+        }
+
+        return null;
+    }
+
     public ResultadoH ejecutar(String id, ArrayList<ResultadoH> valorParametros) {
         funcionActual = buscarFuncion(id);
-        Nodo parametros = funcionActual.raiz.hijos.get(0);
-        Nodo sentencias = funcionActual.raiz.hijos.get(1);
-        guardarParametros(parametros, valorParametros);
-        FuncionH funcion = ejecutar(sentencias);
-        return funcion.retorno;
+        if (funcionActual != null) {
+            Nodo parametros = funcionActual.raiz.hijos.get(0);
+            Nodo sentencias = funcionActual.raiz.hijos.get(1);
+            guardarParametros(parametros, valorParametros);
+            FuncionH funcion = ejecutar(sentencias);
+            return funcion.retorno;
+        } else {
+            Inicio.reporteError2.agregar("Semantido", 2, 7, "La funcion " + id + " no existe", archivo);
+            return null;
+        }
     }
 
     private void guardarParametros(Nodo parametros, ArrayList<ResultadoH> valorParametros) {
         for (int i = 0; i < valorParametros.size(); i++) {
             Nodo parametro = parametros.hijos.get(i);
             ResultadoH valor = valorParametros.get(i);
-            new Declaracion(parametro.valor, valor, tabla);
+            new Declaracion(parametro.valor, valor, tabla, parametro);
         }
     }
 
@@ -89,6 +110,7 @@ public class Interprete {
                     break;
                 case "acceso":
                     SimboloH s = null;
+
                     if (sentencia.hijos.get(0).etiqueta.equals("id")) {
                         String id = sentencia.hijos.get(0).valor;
                         s = tabla.getSimbolo(id);
@@ -103,13 +125,18 @@ public class Interprete {
                         for (Nodo nodo : valores.hijos) {
                             opN = new OperacionNativa(tabla);
                             ResultadoH r = opN.operar(nodo);
-                            Double d = Double.parseDouble(r.valor);
-                            index.add(d.intValue());
+                            if (r != null) {
+                                Double d = Double.parseDouble(r.valor);
+                                index.add(d.intValue());
+                            } else {
+                                Inicio.reporteError2.agregar("Semantico", nodo.linea, nodo.columna, "Indice incorrecto para acceder a la lista", archivo);
+                            }
                         }
                         ResultadoH acceso = s.lista.getValor(index);
                         funcionActual.retorno = acceso;
                     } else {
-                        System.out.println("Error semantico,la lista no existe");
+
+                        Inicio.reporteError2.agregar("Semantico", sentencia.linea, sentencia.columna, "La variable no existe", archivo);
                     }
                     break;
                 case "if":
@@ -120,6 +147,7 @@ public class Interprete {
                     break;
                 case "llamada":
                     funcionActual = llamada(sentencia);
+
                     break;
                 case "calcular"://returnan valores puntuales
                 case "succ":
@@ -141,7 +169,9 @@ public class Interprete {
                 case "desc":
                     opN = new OperacionNativa(tabla);
                     Lista lista = opN.operacionLista(sentencia);
-                    resultado = new ResultadoH(lista.tipo, lista);
+                    if (lista != null) {
+                        resultado = new ResultadoH(lista.tipo, lista);
+                    }
                     funcionActual.retorno = resultado;
                     break;
             }
@@ -159,29 +189,33 @@ public class Interprete {
         TablaSimboloH tablaTemp = new TablaSimboloH();
 
         FuncionH funcionTemp = buscarFuncion(id);
-        ArrayList<ResultadoH> valores = new ArrayList<>();
-        for (Nodo nodo : raiz.hijos.get(0).hijos) {
-            if (nodo.etiqueta.equals("valores") || nodo.etiqueta.equals("listaValores") || nodo.etiqueta.equals("cadena")) {
-                Lista lista = new Lista(nodo, tabla);
-                ResultadoH r = new ResultadoH(lista.tipo, lista);
-                valores.add(r);
-            } else {
-                opN = new OperacionNativa(tabla);
-                ResultadoH r = opN.operar(nodo);
-                valores.add(r);
+        if (funcionTemp != null) {
+            ArrayList<ResultadoH> valores = new ArrayList<>();
+            for (Nodo nodo : raiz.hijos.get(0).hijos) {
+                if (nodo.etiqueta.equals("valores") || nodo.etiqueta.equals("listaValores") || nodo.etiqueta.equals("cadena")) {
+                    Lista lista = new Lista(nodo, tabla);
+                    ResultadoH r = new ResultadoH(lista.tipo, lista);
+                    valores.add(r);
+                } else {
+                    opN = new OperacionNativa(tabla);
+                    ResultadoH r = opN.operar(nodo);
+                    valores.add(r);
+                }
             }
+            pilaTablas.push(tabla);
+            tabla = tablaTemp;
+            guardarParametros(funcionTemp.raiz.hijos.get(0), valores);
+
+            pilaFunciones.push(funcionActual);
+            funcionActual = funcionTemp;
+
+            funcionTemp = ejecutar(funcionTemp.raiz.hijos.get(1));
+
+            tabla = pilaTablas.pop();
+            funcionActual = pilaFunciones.pop();
+        } else {
+            Inicio.reporteError2.agregar("Semantico", raiz.linea, raiz.columna, "La funcion " + id + " no existe", archivo);
         }
-        pilaTablas.push(tabla);
-        tabla = tablaTemp;
-        guardarParametros(funcionTemp.raiz.hijos.get(0), valores);
-
-        pilaFunciones.push(funcionActual);
-        funcionActual = funcionTemp;
-
-        funcionTemp = ejecutar(funcionTemp.raiz.hijos.get(1));
-
-        tabla = pilaTablas.pop();
-        funcionActual = pilaFunciones.pop();
         return funcionTemp;
     }
 
@@ -189,17 +223,21 @@ public class Interprete {
         TablaSimboloH tablaTemp = new TablaSimboloH();
 
         FuncionH funcionTemp = buscarFuncion(id);
-        pilaTablas.push(tabla);
-        tabla = tablaTemp;
-        guardarParametros(funcionTemp.raiz.hijos.get(0), valores);
+        if (funcionTemp != null) {
+            pilaTablas.push(tabla);
+            tabla = tablaTemp;
+            guardarParametros(funcionTemp.raiz.hijos.get(0), valores);
 
-        pilaFunciones.push(funcionActual);
-        funcionActual = funcionTemp;
+            pilaFunciones.push(funcionActual);
+            funcionActual = funcionTemp;
 
-        funcionTemp = ejecutar(funcionTemp.raiz.hijos.get(1));
+            funcionTemp = ejecutar(funcionTemp.raiz.hijos.get(1));
 
-        tabla = pilaTablas.pop();
-        funcionActual = pilaFunciones.pop();
+            tabla = pilaTablas.pop();
+            funcionActual = pilaFunciones.pop();
+        } else {
+            Inicio.reporteError2.agregar("Semantido", 2, 7, "La funcion " + id + " no existe", archivo);
+        }
         return funcionTemp;
     }
 
@@ -212,13 +250,15 @@ public class Interprete {
         Nodo cond = raiz.hijos.get(0).hijos.get(0);
         opL = new OperacionLogica(tabla);
         ResultadoH condicion = opL.resolverLogica(cond);
-
-        if (condicion.valor.equals("true")) {
-            funcionActual = ejecutar(raiz.hijos.get(1));
+        if (condicion != null) {
+            if (condicion.valor.equals("true")) {
+                funcionActual = ejecutar(raiz.hijos.get(1));
+            } else {
+                funcionActual = ejecutar(raiz.hijos.get(2));
+            }
         } else {
-            funcionActual = ejecutar(raiz.hijos.get(2));
+            Inicio.reporteError2.agregar("Semantico", cond.linea, cond.columna, "Se produjo un error al evaluar la condicion de la sentencia if", archivo);
         }
-
         //regreso al ambito
         tabla = pilaTablas.pop();
         return funcionActual;
@@ -238,13 +278,17 @@ public class Interprete {
             expCond.add(val);
             opL = new OperacionLogica(tabla);
             ResultadoH resultado = opL.resolverLogica(expCond);
-            TablaSimboloH tablaTemp = new TablaSimboloH();
-            tablaTemp.cambiarAmbito(tabla);
-            pilaTablas.push(tabla);
-            tabla = tablaTemp;
-            if (resultado.valor.equals("true")) {
-                funcionActual = ejecutar(sentencias);
-                break;
+            if (resultado != null) {
+                TablaSimboloH tablaTemp = new TablaSimboloH();
+                tablaTemp.cambiarAmbito(tabla);
+                pilaTablas.push(tabla);
+                tabla = tablaTemp;
+                if (resultado.valor.equals("true")) {
+                    funcionActual = ejecutar(sentencias);
+                    break;
+                }
+            } else {
+                Inicio.reporteError2.agregar("Semantico", caso.linea, caso.columna, "Se produjo un error al evaluar la condicion del caso ", archivo);
             }
         }
 

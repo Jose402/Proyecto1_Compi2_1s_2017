@@ -36,7 +36,7 @@ public class GraficarFuncion extends Compilador {
         opL = new OperacionLogicaG(global, tabla);
         ResultadoG resultado2 = opL.operar(exp2);
 
-        if (!resultado1.tipo.equalsIgnoreCase("entero") || !resultado2.tipo.equalsIgnoreCase("entero")) {
+        if (resultado1.tipo.equalsIgnoreCase("caracter") || resultado2.tipo.equalsIgnoreCase("caracter") || resultado1.tipo.equalsIgnoreCase("cadena") || resultado2.tipo.equalsIgnoreCase("cadena") || resultado1.tipo.equalsIgnoreCase("bool") || resultado2.tipo.equalsIgnoreCase("bool")) {
             Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "La funcion Graficar solo permite arreglos de enteros");
             return metodoActual;
         }
@@ -67,9 +67,6 @@ public class GraficarFuncion extends Compilador {
 
         if (arreglo1 != null && arreglo2 != null) {
             if (arreglo1.getSize() == arreglo2.getSize()) {
-                //new GraficaGK(arreglo1.getDatos(),arreglo2.getDatos());
-                //Plano plano=new Plano(arreglo1.getDatos(),arreglo2.getDatos());
-                //plano.setVisible(true);
                 Inicio.coordenadas.setCoordenada((ArrayList<Object>) arreglo1.getDatos().clone(), (ArrayList<Object>) arreglo2.getDatos().clone());
             } else {
                 Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "Los arreglos no poseen la misma cantidad de datos");

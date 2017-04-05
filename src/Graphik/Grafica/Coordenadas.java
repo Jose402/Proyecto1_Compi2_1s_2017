@@ -35,7 +35,7 @@ public class Coordenadas {
     }
 
     public boolean vacio() {
-        if (x.size() > 0) {
+        if (x.size() > 0 && y.size() > 0) {
             return false;
         }
         return true;

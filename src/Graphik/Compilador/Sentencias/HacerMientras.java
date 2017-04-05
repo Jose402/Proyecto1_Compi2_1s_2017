@@ -43,6 +43,13 @@ public class HacerMientras extends Compilador {
                 tabla = pilaTablas.pop();
                 opL = new OperacionLogicaG(global, tabla);
                 condicion = opL.operar(exp);
+                if (condicion.tipo.equals("entero")) {
+                    if ((int) condicion.valor == 1) {
+                        condicion = new ResultadoG("bool", true);
+                    } else if ((int) condicion.valor == 0) {
+                        condicion = new ResultadoG("bool", false);
+                    }
+                }
 
                 if (metodoActual.estadoRetorno) {
                     break;

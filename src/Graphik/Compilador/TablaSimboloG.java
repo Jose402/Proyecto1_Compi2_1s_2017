@@ -59,6 +59,13 @@ public class TablaSimboloG {
         simbolo.nombre = simbolo.nombre.toLowerCase();
         if (!existe(simbolo.nombre)) {
             tabla.put(simbolo.nombre, simbolo);
+            if (Graphik.metodoActual != null) {
+                simbolo.ambito = Graphik.claseActual.nombre + "_" + Graphik.metodoActual.nombre;
+            } else {
+                simbolo.ambito = Graphik.claseActual.nombre;
+            }
+            simbolo.rol = "Variable";
+            Graphik.reporteSimbolos.add(simbolo);
             return true;//se agrego correctamente
         } else {
             return false;//no se agrego a la global

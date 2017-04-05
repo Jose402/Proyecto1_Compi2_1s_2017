@@ -15,11 +15,14 @@ public class ErrorP {
     public int linea;
     public int columna;
     public String descripcion;
+    public String archivo;
 
-    public ErrorP(String tipo, int linea, int columna, String descripcion) {
+    public ErrorP(String tipo, int linea, int columna, String archivo, String descripcion) {
         this.tipo = tipo;
         this.linea = linea;
         this.columna = columna;
         this.descripcion = descripcion;
+        this.archivo = archivo;
+
     }
 }

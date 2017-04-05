@@ -35,6 +35,14 @@ public class Si extends Compilador {
         pilaTablas.push(tabla);
         tabla = tablaTemp;
 
+        if (condicion.tipo.equals("entero")) {
+            if ((int) condicion.valor == 1) {
+                condicion = new ResultadoG("bool", true);
+            } else if ((int) condicion.valor == 0) {
+                condicion = new ResultadoG("bool", false);
+            }
+        }
+
         if (condicion.tipo.equalsIgnoreCase("bool")) {
             if ((Boolean) condicion.valor) {
                 metodoActual = ejecutarSentencias(sentenciasSi);
@@ -52,7 +60,7 @@ public class Si extends Compilador {
                 }
             }
         } else {
-            Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "Solo se permiten valores booleanos en la condicion de la sentencia si");
+            Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "Solo se permiten valores booleanos en la condicion de la sentencia si o enteros 0 o 1");
         }
 
         //regreso al ambito 

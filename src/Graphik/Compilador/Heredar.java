@@ -5,6 +5,7 @@
  */
 package Graphik.Compilador;
 
+import Interfaz.Inicio;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -14,7 +15,7 @@ import java.util.Stack;
  */
 public class Heredar {
 
-    private ArrayList<Clase> clases = Graphik.clases;
+    private ArrayList<Archivo> archivos = Graphik.archivos;
     private Stack<Clase> pilaClases;
 
     public Heredar(Clase actual) {
@@ -25,9 +26,13 @@ public class Heredar {
 
     private void heredar(Clase clase) {
         if (clase.nombreHereda != null) {
-            clase.herencia = getClase(clase.nombreHereda);
-            pilaClases.add(clase);
-            heredar(clase.herencia);
+            clase.herencia = getClase(clase);
+            if (clase.herencia != null) {
+                pilaClases.add(clase);
+                heredar(clase.herencia);
+            } else {
+                Inicio.reporteError.agregar("Semantico", 0, 0, "La clase " + clase.nombreHereda + " no existe en el ambito donde fue llamada");
+            }
         } else {
             clase.ejecutar();
             int j = pilaClases.size();
@@ -39,10 +44,37 @@ public class Heredar {
 
     }
 
-    private Clase getClase(String nombre) {
-        for (Clase clase : clases) {
-            if (clase.nombre.equalsIgnoreCase(nombre) && (clase.visibilidad.equalsIgnoreCase("publico") || clase.visibilidad.equalsIgnoreCase("protegido"))) {
-                return clase.clonar();
+    private Clase getClase(Clase clase) {
+
+        Archivo archivo = getArchivo(clase.archivo);
+        Archivo aux = archivo;
+        ArrayList<Clase> clases = archivo.clases;
+        for (Clase hereda : clases) {
+            if (hereda.nombre.equalsIgnoreCase(clase.nombreHereda)) {
+                return hereda.clonar();
+            }
+        }
+
+        for (int i = 0; i < archivos.size(); i++) {
+            archivo = getArchivo(archivos.get(i).nombre);
+            if (archivo != null) {
+
+                clases = archivo.clases;
+                for (Clase hereda : clases) {
+                    if (hereda.nombre.equalsIgnoreCase(clase.nombreHereda) && hereda.visibilidad.equalsIgnoreCase("publico") && aux.archivosImportados.contains(archivo.nombre)) {
+                        return hereda.clonar();
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private Archivo getArchivo(String nombre) {
+        for (Archivo archivo : archivos) {
+            if (archivo.nombre.equalsIgnoreCase(nombre)) {
+                return archivo;
             }
         }
         return null;

@@ -6,8 +6,10 @@
 package Haskell.Interprete.Operaciones;
 
 import Ast.Nodo;
+import Haskell.Interprete.Interprete;
 import Haskell.Interprete.ResultadoH;
 import Haskell.Interprete.TablaSimboloH;
+import Interfaz.Inicio;
 
 /**
  *
@@ -56,6 +58,7 @@ public class OperacionLogica {
                 }
         }
 
+        Inicio.reporteError2.agregar("Semantico", raiz.linea, raiz.columna, "No se pudo realizar la operacion logica", Inicio.interprete.archivo);
         return new ResultadoH("-1", "false");
     }
 

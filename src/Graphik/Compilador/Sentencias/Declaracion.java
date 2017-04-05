@@ -6,6 +6,7 @@
 package Graphik.Compilador.Sentencias;
 
 import Ast.Nodo;
+import Graphik.Compilador.Archivo;
 import Graphik.Compilador.Arreglo;
 import Graphik.Compilador.Clase;
 import Graphik.Compilador.Compilador;
@@ -27,6 +28,7 @@ public class Declaracion extends Compilador {
 
     TablaSimboloG tabla;
     TablaSimboloG global;
+    private ArrayList<Archivo> archivos = Graphik.archivos;
 
     public Declaracion(Nodo raiz, TablaSimboloG global) {
         this.raiz = raiz;
@@ -118,7 +120,8 @@ public class Declaracion extends Compilador {
         Nodo exp = raiz.hijos.get(2);
 
         ResultadoG resultado = opL.operar(exp);
-        resultado = castear(tipo, resultado);
+        Casteo casteo = new Casteo();
+        resultado = casteo.castear(raiz, tipo, resultado);
         if (resultado != null) {
             SimboloG simbolo = new SimboloG(tipo, nombre, visibilidad, resultado.valor);
             simbolo.inicializado = true;
@@ -143,14 +146,13 @@ public class Declaracion extends Compilador {
     }
 
     private SimboloG atributoAlsDI() {
-        ArrayList<Clase> clases = Graphik.clases;
         String tipo1 = raiz.hijos.get(0).valor;
         String nombre = raiz.hijos.get(1).valor;
         String visibilidad = raiz.hijos.get(1).hijos.get(0).valor;
         String tipo2 = raiz.hijos.get(2).valor;
 
         if (tipo1.equalsIgnoreCase(tipo2)) {
-            Clase instancia = getClase(clases, tipo1);
+            Clase instancia = getClase(Graphik.claseActual, tipo1);
             if (instancia != null) {
                 SimboloG simbolo = new SimboloG(tipo1, nombre, visibilidad, instancia);
                 simbolo.inicializado = true;
@@ -169,13 +171,11 @@ public class Declaracion extends Compilador {
     }
 
     private SimboloG atributoAlsD() {
-        ArrayList<Clase> clases = Graphik.clases;
         String tipo = raiz.hijos.get(0).valor;
         ArrayList<Nodo> listaIds = raiz.hijos.get(1).hijos;
-
-        if (existeClase(clases, tipo)) {
+        Clase instancia = getClase(Graphik.claseActual, tipo);
+        if (instancia != null) {
             for (Nodo variable : listaIds) {
-                Clase instancia = getClase(clases, tipo);
                 String nombre = variable.valor;
                 String visibilidad = variable.hijos.get(0).valor;
                 SimboloG simbolo = new SimboloG(tipo, nombre, visibilidad, instancia);
@@ -198,16 +198,6 @@ public class Declaracion extends Compilador {
             }
         }
         return false;
-    }
-
-    private Clase getClase(ArrayList<Clase> clases, String tipo) {
-        for (Clase clase : clases) {
-            if (clase.nombre.equalsIgnoreCase(tipo)) {
-                Clase instancia = clase.clonar();
-                return instancia.clonar();
-            }
-        }
-        return null;
     }
 
     private SimboloG atributoVarArDA() {
@@ -301,7 +291,8 @@ public class Declaracion extends Compilador {
         String nombre = raiz.hijos.get(1).valor;
         Nodo exp = raiz.hijos.get(2);
         ResultadoG resultado = opL.operar(exp);
-        resultado = castear(tipo, resultado);
+        Casteo casteo = new Casteo();
+        resultado = casteo.castear(raiz, tipo, resultado);
 
         if (resultado != null) {
             SimboloG simbolo = new SimboloG(tipo, nombre, resultado.valor);
@@ -318,13 +309,11 @@ public class Declaracion extends Compilador {
     }
 
     private SimboloG varLocalAlsD() {
-        ArrayList<Clase> clases = Graphik.clases;
         String tipo = raiz.hijos.get(0).valor;
         ArrayList<Nodo> listaIds = raiz.hijos.get(1).hijos;
-
-        if (existeClase(clases, tipo)) {
+        Clase instancia = getClase(Graphik.claseActual, tipo);
+        if (instancia != null) {
             for (Nodo variable : listaIds) {
-                Clase instancia = getClase(clases, tipo);
                 String nombre = variable.valor;
                 SimboloG simbolo = new SimboloG(tipo, nombre, instancia);
                 if (!tabla.setSimbolo(simbolo)) {
@@ -339,13 +328,12 @@ public class Declaracion extends Compilador {
     }
 
     private SimboloG varLocalAlsDI() {
-        ArrayList<Clase> clases = Graphik.clases;
         String tipo1 = raiz.hijos.get(0).valor;
         String nombre = raiz.hijos.get(1).valor;
         String tipo2 = raiz.hijos.get(2).valor;
 
         if (tipo1.equalsIgnoreCase(tipo2)) {
-            Clase instancia = getClase(clases, tipo1);
+            Clase instancia = getClase(Graphik.claseActual, tipo1);
             if (instancia != null) {
                 SimboloG simbolo = new SimboloG(tipo1, nombre, instancia);
                 simbolo.inicializado = true;
@@ -472,116 +460,43 @@ public class Declaracion extends Compilador {
         return null;
     }
 
-    private ResultadoG castear(String tipo, ResultadoG resultado) {
-        Object valor;
-        Double doble;
-        switch (tipo) {
-            case "entero":
-                switch (resultado.tipo) {
-                    case "entero":
-                        return resultado;
-                    case "decimal":
-                        doble = (double) resultado.valor;
-                        return new ResultadoG(tipo, doble.intValue());
-                    case "caracter":
-                        valor = (int) (char) resultado.valor;
-                        return new ResultadoG(tipo, valor);
-                    case "bool":
-                        return new ResultadoG(tipo, getBoolValor(resultado.valor));
-                    case "cadena":
-                        Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "Un entero no puede ser cadena");
-                        break;
-                    case "-1":
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case "decimal":
-                switch (resultado.tipo) {
-                    case "entero":
-                        return new ResultadoG(tipo, (double) (int) resultado.valor);
-                    case "decimal":
-                        return resultado;
-                    case "caracter":
-                        valor = (double) (char) resultado.valor;
-                        return new ResultadoG(tipo, valor);
-                    case "bool":
-                        return new ResultadoG(tipo, (double) getBoolValor(resultado.valor));
-                    case "cadena":
-                        Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "Un decimal no puede ser cadena");
-                        break;
-                    case "-1":
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case "caracter":
-                switch (resultado.tipo) {
-                    case "entero":
-                        return new ResultadoG(tipo, (char) (int) resultado.valor);
-                    case "caracter":
-                        return resultado;
-                    case "decimal":
-                    case "bool":
-                    case "cadena":
-                        Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "Error al castear el dato dicimal|bool|cadena a caracter");
-                        break;
-                    case "-1":
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case "bool":
-                switch (resultado.tipo) {
-                    case "bool":
-                        return resultado;
-                    case "decimal":
-                    case "caracter":
-                    case "entero":
-                    case "cadena":
-                        Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "Error al castear el dato decimal|caracter|entero|cadena a bool");
-                        break;
-                    case "-1":
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case "cadena":
-                switch (resultado.tipo) {
-                    case "entero":
-                    case "decimal":
-                    case "caracter":
-                    case "cadena":
-                        return new ResultadoG(tipo, resultado.valor + "");
-                    case "bool":
-                        return new ResultadoG(tipo, getBoolValor(resultado.valor) + "");
-                    case "-1":
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            default:
-                break;
-        }
-        return null;
-    }
-
-    private int getBoolValor(Object objeto) {
-        if ((Boolean) objeto) {
-            return 1;
-        } else {
-            return 0;
-        }
-
-    }
-
     @Override
     public Metodo ejecutar(Nodo raiz) {
         return null;
     }
+
+    private Clase getClase(Clase clase, String tipo) {
+
+        Archivo archivo = getArchivo(clase.archivo);
+        Archivo aux = archivo;
+        ArrayList<Clase> clases = archivo.clases;
+        for (Clase hereda : clases) {
+            if (hereda.nombre.equalsIgnoreCase(tipo)) {
+                return hereda.clonar();
+            }
+        }
+
+        for (int i = 0; i < archivos.size(); i++) {
+            archivo = archivos.get(i);
+            if (archivo != null) {
+                clases = archivo.clases;
+                for (Clase hereda : clases) {
+                    if (hereda.nombre.equalsIgnoreCase(tipo) && hereda.visibilidad.equalsIgnoreCase("publico") && aux.archivosImportados.contains(archivo.nombre)) {
+                        return hereda.clonar();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private Archivo getArchivo(String nombre) {
+        for (Archivo archivo : archivos) {
+            if (archivo.nombre.equalsIgnoreCase(nombre)) {
+                return archivo;
+            }
+        }
+        return null;
+    }
+
 }

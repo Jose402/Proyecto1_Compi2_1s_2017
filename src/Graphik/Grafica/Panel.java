@@ -5,11 +5,14 @@
  */
 package Graphik.Grafica;
 
+import Interfaz.Escala;
 import Interfaz.Inicio;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Random;
@@ -26,14 +29,38 @@ public class Panel extends JPanel {
     private int x;
     private int y;
 
-    private int escalaX = 50; //estala 50/10
-    private int escalaY = 10; //cada 50 pixeles son 10 unidades
+    private int escalaX = 12; //estala 12/1
+    private int escalaY = 1; //cada 12 pixeles es una unidad
     private int escala = escalaX / escalaY;
 
-    public Panel(JFrame ventana) {
+    public Panel(final JFrame ventana) {
         setBackground(Color.white);
         setFocusable(true);
         this.ventana = ventana;
+        this.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent ke) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent ke) {
+
+                if (ke.getKeyCode() == ke.VK_F1) {
+                    Escala escala = new Escala(ventana, true);
+                    escala.setVisible(true);
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent ke) {
+            }
+        });
+    }
+
+    public void setEscala(int x, int y) {
+        escalaX = x;
+        escalaY = y;
+        escala = escalaX / escalaY;
     }
 
     @Override

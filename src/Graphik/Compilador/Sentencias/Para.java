@@ -46,7 +46,13 @@ public class Para extends Compilador {
 
             opL = new OperacionLogicaG(global, tabla);
             ResultadoG condicion = opL.operar(expCondicion);
-
+            if (condicion.tipo.equals("entero")) {
+                if ((int) condicion.valor == 1) {
+                    condicion = new ResultadoG("bool", true);
+                } else if ((int) condicion.valor == 0) {
+                    condicion = new ResultadoG("bool", false);
+                }
+            }
             if (condicion.tipo.equals("bool")) {
                 while ((Boolean) condicion.valor) {
                     TablaSimboloG tablaTemp = new TablaSimboloG();
@@ -75,6 +81,13 @@ public class Para extends Compilador {
                     }
 
                     condicion = opL.operar(expCondicion);
+                    if (condicion.tipo.equals("entero")) {
+                        if ((int) condicion.valor == 1) {
+                            condicion = new ResultadoG("bool", true);
+                        } else if ((int) condicion.valor == 0) {
+                            condicion = new ResultadoG("bool", false);
+                        }
+                    }
                 }
             } else {
                 Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "La condicion del ciclo para solo permite operaciones que retornan un valor booleano");

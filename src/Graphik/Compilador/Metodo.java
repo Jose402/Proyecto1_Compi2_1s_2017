@@ -33,9 +33,12 @@ public class Metodo {
     public Metodo(Nodo raiz) {
         if (raiz.hijos.size() == 1) {
             //si es metodo inicio o datos
+            this.tipo = "vacio";
             this.nombre = raiz.valor;
             this.sentencias = raiz.hijos.get(0);
             this.id = nombre;
+            this.visibilidad = "privado";
+            this.parametros = new ArrayList();
         } else {
             //si es un metodo o funcion 
             this.tipo = raiz.hijos.get(0).valor;

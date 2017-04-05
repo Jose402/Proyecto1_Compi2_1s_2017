@@ -8,16 +8,27 @@ parser code
 {:
     /**Metodo al que se llama automáticamente ante algún error sintactico.*/
     public void syntax_error(Symbol s){
-        System.out.println("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador "
-        +s.value + " no reconocido." );
+        /*System.out.println("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador "
+        +s.value + " no reconocido." );*/
+        Inicio.reporteError2.agregar("Sintactico",s.right+1,s.left+1,"Identificador "+s.value+" no reconocido",Inicio.archivoHaskellActual);
     }
 
     /**Metodo al que se llama en el momento en que ya no es posible una recuperación de
     errores.*/
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
-        System.out.println("Error en la Línea " + (s.right+1)+ "Columna "+(s.left+1)+". Identificador " +
-        s.value + " no reconocido.");
+        /*System.out.println("Error en la Línea " + (s.right+1)+ "Columna "+(s.left+1)+". Identificador " +
+        s.value + " no reconocido.");*/
+        Inicio.reporteError2.agregar("Sintactico",s.right+1,s.left+1,"Identificador "+s.value+" no reconocido",Inicio.archivoHaskellActual);
     }
+
+        public Nodo getRaiz(){
+        return action_obj.raiz;
+    }
+:}
+
+action code {:
+    Nodo raiz=null;
+    
 :}
 
 
@@ -78,7 +89,7 @@ precedence left concatenar;
 start with INICIO; // start with sirve para indicarle al parser con que produccion empezar
 
 INICIO::=FUNCIONES:funciones SALTOSSTAR {:
-	Inicio.raiz=funciones;
+	raiz=funciones;
 	:}
 	|SENTENCIA:val {:RESULT=val;
 	Inicio.raiz=val;
@@ -102,8 +113,9 @@ EXPA::=EXPA:d1 mas:op EXPA:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1
     |iden:id1 {:RESULT=new Nodo("id",id1,id1right,id1left);:};
 
 EXPC::=iden:id {:RESULT=new Nodo("id",id,idright,idleft);:}
-	|VALOREXP:val {:RESULT=val;:};
-}
+	|VALOREXP:val {:RESULT=val;:}
+	|cadena:dato {:RESULT=new Nodo("cadena",dato,datoright,datoleft);:};
+
 
 EXPR::=EXPC:d1 igualIgual:op EXPC:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
     |EXPC:d1 mayor:op EXPC:d2 {:RESULT=new Nodo(op,opright,opleft);RESULT.add(d1);RESULT.add(d2);:}
@@ -258,7 +270,8 @@ SENTENCIA::=CALCULAR:sent {:RESULT=sent;:}
 			|OPERACIONLISTA:sent {:RESULT=sent;:}
 			|OPERACIONLISTA2:sent {:RESULT=sent;:}
 			|CONCA:sent {:RESULT=sent;:}
-			|ans:ans {:RESULT=new Nodo("ans",ans,ansright,ansleft);:};
+			|ans:ans {:RESULT=new Nodo("ans",ans,ansright,ansleft);:}
+			|error SALTOS SENTENCIA:sent {:RESULT=sent;:};
 
 //funcion
 FUNCION::=iden:id PARAMETROSTAR:par igual SENTENCIAS:sent1 SALTOS end {:
@@ -266,8 +279,8 @@ FUNCION::=iden:id PARAMETROSTAR:par igual SENTENCIAS:sent1 SALTOS end {:
 		funcion.add(par);
 		funcion.add(sent1);
 		RESULT=funcion;
-		:};
-
+		:}
+		|error SALTOS FUNCION:fun {:RESULT=fun;:};
 
 FUNCIONES::=FUNCIONES:lista SALTOS FUNCION:funcion {:RESULT=lista;
 			RESULT.add(funcion);

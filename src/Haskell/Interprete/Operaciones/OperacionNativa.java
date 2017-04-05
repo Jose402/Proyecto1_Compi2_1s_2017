@@ -7,6 +7,7 @@ package Haskell.Interprete.Operaciones;
 
 import Ast.Nodo;
 import Haskell.Interprete.FuncionH;
+import Haskell.Interprete.Interprete;
 import Haskell.Interprete.Lista;
 import Haskell.Interprete.ResultadoH;
 import Haskell.Interprete.SimboloH;
@@ -109,7 +110,7 @@ public class OperacionNativa {
         ResultadoH calcular = opA.resolver(raiz.hijos.get(0));
         Double valor = Double.parseDouble(calcular.valor);
         valor = valor + 1;
-        return new ResultadoH(calcular.tipo, valor + "");
+        return new ResultadoH("numero", valor + "");
     }
 
     private ResultadoH decc(Nodo raiz) {
@@ -117,7 +118,7 @@ public class OperacionNativa {
         ResultadoH calcular = opA.resolver(raiz.hijos.get(0));
         Double valor = Double.parseDouble(calcular.valor);
         valor = valor - 1;
-        return new ResultadoH(calcular.tipo, valor + "");
+        return new ResultadoH("numero", valor + "");
     }
 
     private ResultadoH min(Lista lista) {
@@ -145,7 +146,7 @@ public class OperacionNativa {
                 d = d * c;
             }
         }
-        return new ResultadoH(lista.tipo, d + "");
+        return new ResultadoH("numero", d + "");
     }
 
     private ResultadoH sum(Lista lista) {
@@ -161,11 +162,11 @@ public class OperacionNativa {
                 d = d + c;
             }
         }
-        return new ResultadoH(lista.tipo, d + "");
+        return new ResultadoH("numero", d + "");
     }
 
     private ResultadoH length(Lista lista) {
-        return new ResultadoH(lista.tipo, lista.valores.size() + "");
+        return new ResultadoH("numero", lista.valores.size() + "");
     }
 
     private Lista desc(Lista lista) {
@@ -273,6 +274,7 @@ public class OperacionNativa {
                 return s.lista;
             } else {
                 System.out.println("Error semantico,la lista no existe!!!");
+                Inicio.reporteError2.agregar("Semantico", raiz.linea, raiz.columna, "La lista " + nombre + " no existe", Inicio.interprete.archivo);
             }
         } else {
             Lista l = operacionLista(raiz.hijos.get(0));

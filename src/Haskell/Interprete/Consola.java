@@ -35,12 +35,20 @@ public class Consola {
                 if (sim != null) {
                     txtConsola.append("\n");
                     txtConsola.append(">" + sim.lista.getString());
+                } else {
+                    txtConsola.append("\n");
+                    txtConsola.append("Ocurrio un error al momento de guardar la listas");
                 }
                 break;
             case "llamada":
-                FuncionH funcionActual = Inicio.interprete.llamada(raiz, tabla);
-                txtConsola.append("\n");
-                txtConsola.append(">" + funcionActual.retorno.valor);
+                if (Inicio.interprete != null) {
+                    FuncionH funcionActual = Inicio.interprete.llamada(raiz, tabla);
+                    txtConsola.append("\n");
+                    txtConsola.append(">" + funcionActual.retorno.valor);
+                } else {
+                    txtConsola.append("\n");
+                    txtConsola.append(">No hay funciones Haskell++ cargadas");
+                }
                 break;
             case "acceso":
                 SimboloH s = null;
@@ -59,21 +67,38 @@ public class Consola {
                     for (Nodo nodo : valores.hijos) {
                         opN = new OperacionNativa(tabla);
                         ResultadoH r = opN.operar(nodo);
-                        Double d = Double.parseDouble(r.valor);
-                        index.add(d.intValue());
+                        if (r != null) {
+                            Double d = Double.parseDouble(r.valor);
+                            index.add(d.intValue());
+                        } else {
+                            txtConsola.append("\n");
+                            txtConsola.append("Indice incorrecto");
+                        }
                     }
                     ResultadoH acceso = s.lista.getValor(index);
-                    txtConsola.append("\n");
-                    txtConsola.append(">" + acceso.valor);
+                    if (acceso != null) {
+                        txtConsola.append("\n");
+                        txtConsola.append(">" + acceso.valor);
+                    } else {
+                        txtConsola.append("\n");
+                        txtConsola.append("Ocurrio un error al momento de acceder a la lista");
+                    }
                 } else {
-                    System.out.println("Error semantico,la lista no existe");
+
+                    txtConsola.append("\n");
+                    txtConsola.append("Error semantico, la lista no existe");
                 }
                 break;
             default:
                 opN = new OperacionNativa(tabla);
                 ResultadoH r = opN.imprimirConsola(raiz);
-                txtConsola.append("\n");
-                txtConsola.append(">" + r.valor);
+                if (r != null) {
+                    txtConsola.append("\n");
+                    txtConsola.append(">" + r.valor);
+                } else {
+                    txtConsola.append("\n");
+                    txtConsola.append("Ocurio un error al operar");
+                }
         }
         return null;
     }

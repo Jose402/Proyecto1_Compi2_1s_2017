@@ -6,6 +6,7 @@
 package Graphik.Compilador.Sentencias;
 
 import Ast.Nodo;
+import Graphik.Compilador.Archivo;
 import Graphik.Compilador.Arreglo;
 import Graphik.Compilador.Clase;
 import Graphik.Compilador.Compilador;
@@ -27,6 +28,7 @@ public class Asignacion extends Compilador {
 
     TablaSimboloG tabla;
     TablaSimboloG global;
+    private ArrayList<Archivo> archivos = Graphik.archivos;
 
     public Asignacion(Nodo raiz, TablaSimboloG global, TablaSimboloG tabla) {
         this.raiz = raiz;
@@ -68,6 +70,15 @@ public class Asignacion extends Compilador {
             }
         }
         ResultadoG resultado = opL.operar(raiz.hijos.get(1));
+        Casteo casteo;
+        if (resultado.valor != null && simbolo != null) {
+            casteo = new Casteo();
+            resultado = casteo.castear(raiz, simbolo.tipo, resultado);
+        } else {
+            Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "Tipo de dato invalido");
+            return null;
+        }
+
         if (resultado.valor != null) {
             if (simbolo != null) {
                 if (simbolo.tipo.equalsIgnoreCase(resultado.tipo)) {
@@ -96,7 +107,8 @@ public class Asignacion extends Compilador {
                         }
                     } else//si es cadena,entero,decimal,caracter,bool u objeto
                      if (simbolo.tipo.equals("entero") || simbolo.tipo.equals("decimal") || simbolo.tipo.equals("cadena") || simbolo.tipo.equals("caracter") || simbolo.tipo.equals("bool")) {
-                            resultado = castear(simbolo.tipo, resultado);
+                            casteo = new Casteo();
+                            resultado = casteo.castear(raiz, simbolo.tipo, resultado);
                             if (resultado != null) {
                                 simbolo.valor = resultado.valor;
                                 simbolo.inicializado = true;
@@ -135,6 +147,9 @@ public class Asignacion extends Compilador {
                     break;
                 case "id":
                     nombre = acceso.valor;
+                    if (nombre.equals("cir")) {
+                        int cc = 2 + 4;
+                    }
                     simbolo = tabla.getSimbolo(nombre, aux);
                     if (nivel > 0) {
                         int a = 1 + 2 * 3;
@@ -161,10 +176,14 @@ public class Asignacion extends Compilador {
                                 sim = simbolo;
                                 break;
                             default:
-                                nivel++;
-                                aux = (Clase) simbolo.valor;
-                                tabla = aux.tabla;
-                                sim = simbolo;
+                                try {
+                                    nivel++;
+                                    aux = (Clase) simbolo.valor;
+                                    tabla = aux.tabla;
+                                    sim = simbolo;
+                                } catch (Exception e) {
+                                    int a = 3 + 4;
+                                }
                                 break;
                         }
 
@@ -179,8 +198,15 @@ public class Asignacion extends Compilador {
                     if (metodo != null) {
                         if (metodo.retorno != null) {
                             if (metodo.tipo.equalsIgnoreCase(metodo.retorno.tipo)) {
-                                sim = (SimboloG) metodo.retorno.valor;
-                                metodo.estadoRetorno = false;
+                                /*
+                                if(metodo.retorno.tipo.equals("entero")||metodo.retorno.tipo.equals("decimal")||metodo.retorno.tipo.equals("cadena")||metodo.retorno.tipo.equals("caracter")||metodo.retorno.tipo.equals("bool")){
+                                    sim = (SimboloG) metodo.retorno.valor;
+                                    metodo.estadoRetorno = false;
+                                }else{
+                                    
+                                }
+                                 */
+                                sim = metodo.retorno.simbolo;
                                 if (!sim.tipo.equalsIgnoreCase("cadena") && !sim.tipo.equalsIgnoreCase("entero") && !sim.tipo.equalsIgnoreCase("decimal") && !sim.tipo.equalsIgnoreCase("caracter") && !sim.tipo.equalsIgnoreCase("bool")) {
                                     aux = (Clase) sim.valor;
                                     tabla = aux.tabla;
@@ -224,7 +250,8 @@ public class Asignacion extends Compilador {
                     }
                     opL = new OperacionLogicaG(global, tabla);
                     ResultadoG res = opL.operar(valorIndice);
-                    res = castear(simbolo.tipo, res);
+                    Casteo casteo = new Casteo();
+                    res = casteo.castear(raiz, simbolo.tipo, res);
                     if (res == null) {
                         return null;
                     }
@@ -283,7 +310,7 @@ public class Asignacion extends Compilador {
             if (!simbolo.tipo.equals("numero") && !simbolo.tipo.equals("cadena") && !simbolo.tipo.equals("bool") && !simbolo.tipo.equals("caracter") && !simbolo.tipo.equals("decimal")) {
                 String tipo2 = raiz.hijos.get(1).valor;
                 if (tipo2.equalsIgnoreCase(simbolo.tipo)) {
-                    Clase instancia = getClase(tipo2);
+                    Clase instancia = getClase(Graphik.claseActual, tipo2);
                     if (instancia != null) {
                         simbolo.inicializado = true;
                         simbolo.valor = instancia;
@@ -306,125 +333,42 @@ public class Asignacion extends Compilador {
         return null;
     }
 
-    private Clase getClase(String tipo) {
-        for (Clase clase : clases) {
-            if (clase.nombre.equalsIgnoreCase(tipo)) {
-                Clase instancia = clase.clonar();
-                return instancia.clonar();
+    @Override
+    public Metodo ejecutar(Nodo raiz) {
+        return null;
+    }
+
+    private Clase getClase(Clase clase, String tipo) {
+
+        Archivo archivo = getArchivo(clase.archivo);
+        Archivo aux = archivo;
+        ArrayList<Clase> clases = archivo.clases;
+        for (Clase hereda : clases) {
+            if (hereda.nombre.equalsIgnoreCase(tipo)) {
+                return hereda.clonar();
+            }
+        }
+
+        for (int i = 0; i < archivos.size(); i++) {
+            archivo = archivos.get(i);
+            if (archivo != null) {
+                clases = archivo.clases;
+                for (Clase hereda : clases) {
+                    if (hereda.nombre.equalsIgnoreCase(tipo) && hereda.visibilidad.equalsIgnoreCase("publico") && aux.archivosImportados.contains(archivo.nombre)) {
+                        return hereda.clonar();
+                    }
+                }
             }
         }
         return null;
     }
 
-    private ResultadoG castear(String tipo, ResultadoG resultado) {
-        Object valor;
-        Double doble;
-        switch (tipo) {
-            case "entero":
-                switch (resultado.tipo) {
-                    case "entero":
-                        return resultado;
-                    case "decimal":
-                        doble = (double) resultado.valor;
-                        return new ResultadoG(tipo, doble.intValue());
-                    case "caracter":
-                        valor = (int) (char) resultado.valor;
-                        return new ResultadoG(tipo, valor);
-                    case "bool":
-                        return new ResultadoG(tipo, getBoolValor(resultado.valor));
-                    case "cadena":
-                        Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "Un entero no puede ser cadena");
-                        break;
-                    case "-1":
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case "decimal":
-                switch (resultado.tipo) {
-                    case "entero":
-                        return new ResultadoG(tipo, (double) resultado.valor);
-                    case "decimal":
-                        return resultado;
-                    case "caracter":
-                        valor = (double) (char) resultado.valor;
-                        return new ResultadoG(tipo, valor);
-                    case "bool":
-                        return new ResultadoG(tipo, (double) getBoolValor(resultado.valor));
-                    case "cadena":
-                        Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "Un decimal no puede ser cadena");
-                        break;
-                    case "-1":
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case "caracter":
-                switch (resultado.tipo) {
-                    case "entero":
-                        return new ResultadoG(tipo, (char) (int) resultado.valor);
-                    case "caracter":
-                        return resultado;
-                    case "decimal":
-                    case "bool":
-                    case "cadena":
-                        Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "Error al castear el dato dicimal|bool|cadena a caracter");
-                        break;
-                    case "-1":
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case "bool":
-                switch (resultado.tipo) {
-                    case "bool":
-                        return resultado;
-                    case "decimal":
-                    case "caracter":
-                    case "entero":
-                    case "cadena":
-                        Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "Error al castear el dato decimal|caracter|entero|cadena a bool");
-                        break;
-                    case "-1":
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case "cadena":
-                switch (resultado.tipo) {
-                    case "entero":
-                    case "decimal":
-                    case "caracter":
-                    case "bool":
-                    case "cadena":
-                        return new ResultadoG(tipo, resultado.valor + "");
-                    case "-1":
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            default:
-                break;
+    private Archivo getArchivo(String nombre) {
+        for (Archivo archivo : archivos) {
+            if (archivo.nombre.equalsIgnoreCase(nombre)) {
+                return archivo;
+            }
         }
-        return null;
-    }
-
-    private int getBoolValor(Object objeto) {
-        if ((Boolean) objeto) {
-            return 1;
-        } else {
-            return 0;
-        }
-
-    }
-
-    @Override
-    public Metodo ejecutar(Nodo raiz) {
         return null;
     }
 

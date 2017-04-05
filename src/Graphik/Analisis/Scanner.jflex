@@ -1,6 +1,6 @@
 package Graphik.Analisis;
 import java_cup.runtime.Symbol;
-
+import Interfaz.*;
 %%
 %cupsym sym
 %class Lexico
@@ -121,7 +121,7 @@ bool=("verdadero"|"falso"|"1"|"0")
 "graphikar_funcion" {imprimir(yytext());return new Symbol(sym.graphikar_funcion,yycolumn,yyline,yytext());}
 "Datos"          {imprimir(yytext());return new Symbol(sym.datos,yycolumn,yyline,yytext());}
 "Columna"        {imprimir(yytext());return new Symbol(sym.columna,yycolumn,yyline,yytext());}
-"Procesar"       {imprimir(yytext());return new Symbol(sym.procesar, yychar,yycolumn,yyline);}
+"Procesar"       {imprimir(yytext());return new Symbol(sym.procesar,yycolumn,yyline,yytext());}
 "Donde"          {imprimir(yytext());return new Symbol(sym.donde,yycolumn,yyline,yytext());}
 "DondeCada"      {imprimir(yytext());return new Symbol(sym.dondeCada,yycolumn,yyline,yytext());}
 "DondeTodo"      {imprimir(yytext());return new Symbol(sym.dondeTodo,yycolumn,yyline,yytext());}
@@ -146,6 +146,9 @@ bool=("verdadero"|"falso"|"1"|"0")
 
 
 /* Cualquier Otro */
-.                {System.out.println("Error lexico: "+yytext()+ " Linea:"+(yyline+1)+" Columna:"+(yycolumn+1));}
+.   {
+	/*System.out.println("Error lexico: "+yytext()+ " Linea:"+(yyline+1)+" Columna:"+(yycolumn+1));*/
+	Inicio.reporteError.agregar("Lexico",yyline+1,yycolumn+1,yytext()+" simbolo no reconocido");
+			}
 
 

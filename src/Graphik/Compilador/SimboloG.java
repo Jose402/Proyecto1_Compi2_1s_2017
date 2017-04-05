@@ -17,7 +17,9 @@ public class SimboloG {
     public Object valor;
     public boolean inicializado = false;
     public boolean esArreglo = false;
-    //public boolean seHereda = false;
+
+    public String ambito;
+    public String rol;
 
     public SimboloG(String tipo, String nombre, String visibilidad, Object valor) {
         if (valor != null) {

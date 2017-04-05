@@ -37,6 +37,9 @@ public class LlamadaMetodo extends Compilador {
     @Override
     public Metodo ejecutar(Nodo raiz) {
         String nombre = raiz.valor;
+        if (nombre.equalsIgnoreCase("ingresar")) {
+            int valor = 1 + 2 * 3;
+        }
         ArrayList<ResultadoG> parametros = getParametros(raiz);
         String id = getId(nombre, parametros);
         Metodo metodoTemp = getMetodo(id);
@@ -60,7 +63,9 @@ public class LlamadaMetodo extends Compilador {
             claseActual = actual;
 
             metodoTemp = ejecutarSentencias(metodoActual.sentencias);
-
+            metodoTemp.estadoRetorno = false;
+            metodoTemp.estadoContinuar = false;
+            metodoTemp.estadoTerminar = false;
             metodoActual = pilaMetodos.pop();
             claseActual = pilaClases.pop();
             global = claseActual.global;
@@ -72,43 +77,11 @@ public class LlamadaMetodo extends Compilador {
         return metodoTemp;
     }
 
-    /*
-    @Override
-    public Metodo ejecutar(Nodo raiz) {
-        String nombre=raiz.valor;
-        ArrayList<ResultadoG> parametros=getParametros(raiz);
-        String id=getId(nombre,parametros);
-        Metodo metodoTemp=getMetodo(id);
-        if(metodoTemp!=null){
-            //actual.tabla=new TablaSimboloG();
-            pilaTablas.push(tabla);
-            TablaSimboloG tablaTemp=new TablaSimboloG();
-            tabla=tablaTemp;
-            for(int i=0;i<metodoTemp.parametros.size();i++){
-                Nodo parametro=metodoTemp.parametros.get(i);
-                ResultadoG valor=parametros.get(i);
-                new Declaracion(parametro, valor,actual.global,actual.tabla);
-            }
-            pilaMetodos.push(metodoActual);
-            metodoActual=metodoTemp;
-            
-            tabla=actual.tabla;
-            global=actual.global;
-            pilaClases.push(claseActual);
-            claseActual=actual;
+    private Metodo datos(Nodo raiz) {
 
-            metodoTemp=ejecutarSentencias(metodoActual.sentencias);
-            
-            claseActual.tabla.tabla.clear();
-            metodoActual=pilaMetodos.pop();
-            claseActual=pilaClases.pop();
-            global=claseActual.global;
-            tabla=pilaTablas.pop();
-        }else{
-            Inicio.reporteError.agregar("Semantico",raiz.linea,raiz.columna,"El metodo "+nombre+" no existe en el ambito donde fue invocado");
-        }
-        return metodoTemp;
-    }*/
+        return metodoActual;
+    }
+
     private String getId(String nombre, ArrayList<ResultadoG> parametros) {
         for (ResultadoG resultado : parametros) {
             if (resultado.valor != null) {

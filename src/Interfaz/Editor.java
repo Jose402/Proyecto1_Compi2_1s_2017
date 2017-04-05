@@ -25,11 +25,13 @@ public class Editor extends JPanel {
     //private final JTextPane txtArea;
     private RSyntaxTextArea txtArea;
     public File file;
+    public String nombre;
+    public String tipo;
 
     public Editor(String texto, String nombre, File file) {
-
+        this.tipo = nombre.substring(nombre.length() - 2, nombre.length());
         this.file = file;
-
+        this.nombre = nombre;
         txtArea = new RSyntaxTextArea(20, 60);
         txtArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         txtArea.setText(texto);

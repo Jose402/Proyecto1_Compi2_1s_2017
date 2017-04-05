@@ -17,6 +17,7 @@ import java.util.Stack;
  */
 public class Clase implements Cloneable {
 
+    //encabezado
     //variables usadas en la compilacion
     public Stack<TablaSimboloG> pilaTablas;
 
@@ -40,6 +41,7 @@ public class Clase implements Cloneable {
     }
 
     public Clase(Nodo raiz) {
+
         global = new TablaSimboloG();
         tabla = new TablaSimboloG();
         atributos = new ArrayList<>();
@@ -66,6 +68,10 @@ public class Clase implements Cloneable {
                 Metodo metodo = new Metodo(hijo);
                 if (!existeMetodo(metodo.id, hijo)) {
                     metodos.add(metodo);
+                    SimboloG simbolo = new SimboloG(metodo.tipo, metodo.nombre, "metodo");
+                    simbolo.rol = "Metodo";
+                    simbolo.ambito = nombre;
+                    Graphik.reporteSimbolos.add(simbolo);
                 }
             }
         }

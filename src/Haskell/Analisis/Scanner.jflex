@@ -1,6 +1,6 @@
 package Haskell.Analisis;
 import java_cup.runtime.Symbol;
-
+import Interfaz.*;
 %%
 %cupsym sym
 %class LexicoH
@@ -126,6 +126,9 @@ caracter="'"[^*]"'"
 
 
 /* Cualquier Otro */
-.                {System.out.println("Error lexico: "+yytext()+ " Linea:"+(yyline+1)+" Columna:"+(yycolumn+1));}
+.                {
+	System.out.println("Error lexico: "+yytext()+ " Linea:"+(yyline+1)+" Columna:"+(yycolumn+1));
+	Inicio.reporteError2.agregar("Lexico",yyline+1,yycolumn+1,yytext()+" simbolo no reconocido");
+	}
 
 

@@ -1,0 +1,64 @@
+package Graphik.AnalisisDatos;
+import Graphik.Datos.*;
+import Ast.*;
+import Interfaz.Inicio;
+
+import java_cup.runtime.*;
+
+parser code
+{:
+    
+    /**Metodo al que se llama automáticamente ante algún error sintactico.*/
+    public void syntax_error(Symbol s){
+        System.out.println("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador "
+        +s.value + " no reconocido." );
+    }
+
+    /**Metodo al que se llama en el momento en que ya no es posible una recuperación de
+    errores.*/
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        System.out.println("Error en la Línea " + (s.right+1)+ "Columna "+(s.left+1)+". Identificador " +
+        s.value + " no reconocido.");
+    }
+:}
+
+/*Contiene el valor del tipo de dato especifico*/
+terminal String decimal,entero,cadena;
+terminal String coma,salto,corInicio,corFin,llaveInicio,llaveFin;
+
+
+//no terminales
+non terminal INICIO,FILA,FILAS,SALTO,SALTOS;
+non terminal Datos ENCABEZADO;
+non terminal Celda DATO;
+
+/* ­­­­­­­­­­­­­­ Declaración de la gramática  ­­­­­­­­­­­ */
+start with INICIO; // start with sirve para indicarle al parser con que produccion empezar
+
+INICIO::= ENCABEZADO  SALTO  FILAS SALTOS;
+
+ENCABEZADO::=ENCABEZADO coma corInicio cadena:c corFin {:
+        Columna col=new Columna(c);
+        Inicio.datos.add(col);
+        :}
+        |corInicio cadena:c corFin {:
+        Columna col=new Columna(c);
+        Inicio.datos.add(col);
+        :}; 
+
+FILAS::=FILAS  SALTO {:Inicio.datos.indice=0;:} FILA 
+        |FILA {:Inicio.datos.indice=0;:};
+
+FILA::=FILA coma llaveInicio DATO:c llaveFin {:Inicio.datos.addCelda(c);:}
+    |llaveInicio DATO:c llaveFin {:Inicio.datos.addCelda(c);:};
+}
+
+DATO::=cadena:c {:RESULT=new Celda("cadena",c);:}
+    |entero:c {:RESULT=new Celda("entero",Integer.parseInt(c));:}
+    |decimal:c {:RESULT=new Celda("decimal",Double.parseDouble(c));:};
+
+SALTOS::=SALTO
+        |;
+
+SALTO::=SALTO salto
+    |salto;

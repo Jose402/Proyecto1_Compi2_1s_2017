@@ -6,11 +6,13 @@
 package Haskell.Interprete.Sentencias;
 
 import Ast.Nodo;
+import Haskell.Interprete.Interprete;
 import Haskell.Interprete.Lista;
 import Haskell.Interprete.Operaciones.OperacionNativa;
 import Haskell.Interprete.ResultadoH;
 import Haskell.Interprete.SimboloH;
 import Haskell.Interprete.TablaSimboloH;
+import Interfaz.Inicio;
 
 /**
  *
@@ -34,13 +36,14 @@ public class Declaracion {
         return declaracion(raiz);
     }
 
-    public Declaracion(String nombre, ResultadoH valor, TablaSimboloH tabla) {
+    public Declaracion(String nombre, ResultadoH valor, TablaSimboloH tabla, Nodo raiz) {
         this.tabla = tabla;
 
         SimboloH simbolo = new SimboloH(valor.tipo, nombre, valor.valor);
         simbolo.lista = valor.lista;
         if (!tabla.setSimbolo(simbolo)) {
-            System.out.println("Error semantico,La variable ya existe!!!");
+
+            Inicio.reporteError2.agregar("Semantico", raiz.linea, raiz.columna, "La variable " + nombre + " ya existe", Inicio.interprete.archivo);
         }
 
     }
@@ -58,7 +61,7 @@ public class Declaracion {
 
         SimboloH simbolo = new SimboloH(nombre, lista);
         if (!tabla.setSimbolo(simbolo)) {
-            System.out.println("Error semantico,El simbolo ya existe!!!");
+            Inicio.reporteError2.agregar("Semantico", raiz.linea, raiz.columna, "La variable " + nombre + " ya existe", Inicio.interprete.archivo);
             return null;
         } else {
             return simbolo;

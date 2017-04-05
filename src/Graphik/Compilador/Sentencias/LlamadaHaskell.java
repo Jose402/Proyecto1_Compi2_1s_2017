@@ -6,7 +6,9 @@
 package Graphik.Compilador.Sentencias;
 
 import Ast.Nodo;
+import Graphik.Compilador.Archivo;
 import Graphik.Compilador.Arreglo;
+import Graphik.Compilador.Compilador;
 import Graphik.Compilador.Operaciones.OperacionLogicaG;
 import Graphik.Compilador.ResultadoG;
 import Graphik.Compilador.TablaSimboloG;
@@ -34,6 +36,12 @@ public class LlamadaHaskell {
 
     public ResultadoG ejecutar(Nodo raiz) {
         String nombre = raiz.valor;
+
+        if (!existeFuncion(nombre)) {
+            Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "La funcion haskell++ " + nombre + " no se a incluido en el archivo");
+            return new ResultadoG("-1", null);
+        }
+
         Nodo parametros = raiz.hijos.get(0);
         ArrayList<ResultadoH> listaParametros = new ArrayList();
         for (Nodo parametro : parametros.hijos) {
@@ -59,6 +67,10 @@ public class LlamadaHaskell {
                     ResultadoH resultadoH = new ResultadoH("cadena", lista);
                     listaParametros.add(resultadoH);
                 } else if (resultadoG.tipo.equals("caracter")) {
+                    Lista lista = new Lista(parametro);
+                    ResultadoH resultadoH = new ResultadoH("caracter", lista);
+                    listaParametros.add(resultadoH);
+                } else if (resultadoG.tipo.equals("caracter")) {
                     if (resultadoG.valor.getClass().getSimpleName().equalsIgnoreCase("arreglo")) {
                         Arreglo arreglo = (Arreglo) resultadoG.valor;
                         Lista lista = new Lista("cadena");
@@ -76,12 +88,40 @@ public class LlamadaHaskell {
             }
         }
 
+        if (Inicio.interprete == null) {
+            Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "No hay funciones Haskell++ cargadas");
+            return new ResultadoG("-1", null);
+        }
         FuncionH funcion = Inicio.interprete.llamada(nombre, listaParametros);
         if (funcion.retorno != null) {
-            return new ResultadoG("decimal", Double.parseDouble(funcion.retorno.valor));
+            if (funcion.retorno.tipo.equalsIgnoreCase("numero")) {
+                return new ResultadoG("decimal", Double.parseDouble(funcion.retorno.valor));
+            } else if (funcion.retorno.tipo.equalsIgnoreCase("cadena")) {
+                return new ResultadoG("cadena", funcion.retorno.valor);
+            }
         } else {
             Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "No se pudo acceder a la funcion haskell++ " + nombre);
         }
         return new ResultadoG("-1", null);
     }
+
+    private boolean existeFuncion(String nombre) {
+        Archivo archivo = getArchivo(Compilador.claseActual.archivo);
+        for (String funcion : archivo.archivosIncluidos) {
+            if (funcion.equalsIgnoreCase(nombre)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Archivo getArchivo(String nombre) {
+        for (Archivo archivo : Compilador.archivos) {
+            if (archivo.nombre.equalsIgnoreCase(nombre)) {
+                return archivo;
+            }
+        }
+        return null;
+    }
+
 }

@@ -13,6 +13,7 @@ public class ResultadoG {
 
     public String tipo;
     public Object valor;
+    public SimboloG simbolo;
 
     public ResultadoG() {
 

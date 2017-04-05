@@ -7,6 +7,7 @@ package Haskell.Interprete.Operaciones;
 
 import Ast.Nodo;
 import Haskell.Interprete.*;
+import Interfaz.Inicio;
 import java.util.Objects;
 
 /**
@@ -71,23 +72,44 @@ public class OperacionRelacional {
 
         switch (tipoComp) {
             case 0://si es lista
+                int valComp = str1.compareTo(str2);
                 switch (raiz.etiqueta) {
                     case "==":
-                        if (str1.equalsIgnoreCase(str2)) {
+                        if (str1.equals(str2)) {
                             return new ResultadoH("bool", "true");
                         } else {
                             return new ResultadoH("bool", "false");
                         }
                     case ">":
-                        break;
+                        if (valComp > 0) {
+                            return new ResultadoH("bool", "true");
+                        } else {
+                            return new ResultadoH("bool", "false");
+                        }
                     case ">=":
-                        break;
+                        if (valComp >= 0) {
+                            return new ResultadoH("bool", "true");
+                        } else {
+                            return new ResultadoH("bool", "false");
+                        }
                     case "<":
-                        break;
+                        if (valComp < 0) {
+                            return new ResultadoH("bool", "true");
+                        } else {
+                            return new ResultadoH("bool", "false");
+                        }
                     case "<=":
-                        break;
+                        if (valComp <= 0) {
+                            return new ResultadoH("bool", "true");
+                        } else {
+                            return new ResultadoH("bool", "false");
+                        }
                     case "!=":
-                        break;
+                        if (!str1.equals(str2)) {
+                            return new ResultadoH("bool", "true");
+                        } else {
+                            return new ResultadoH("bool", "false");
+                        }
                 }
                 break;
             case 1://si es numero
@@ -131,7 +153,7 @@ public class OperacionRelacional {
                 }
                 break;
         }
-
+        Inicio.reporteError2.agregar("Semantico", raiz.linea, raiz.columna, "No se pudo realizar la operacion relacional", Inicio.interprete.archivo);
         return new ResultadoH("-1", "false");
     }
 }

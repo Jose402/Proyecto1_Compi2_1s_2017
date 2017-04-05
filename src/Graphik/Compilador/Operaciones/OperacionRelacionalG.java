@@ -64,7 +64,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((int) resultado1.valor == (Double) resultado2.valor) {
+                                if ((int) resultado1.valor == (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -91,25 +91,25 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                     case "decimal":
                         switch (resultado2.tipo) {
                             case "entero":
-                                if ((Double) resultado1.valor == (int) resultado2.valor) {
+                                if ((double) resultado1.valor == (int) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((Double) resultado1.valor == (Double) resultado2.valor) {
+                                if ((double) resultado1.valor == (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "bool":
-                                if ((Double) resultado1.valor == getBoolValor(resultado2.valor)) {
+                                if ((double) resultado1.valor == getBoolValor(resultado2.valor)) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "caracter":
-                                if ((Double) resultado1.valor == (char) resultado2.valor) {
+                                if ((double) resultado1.valor == (char) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -130,13 +130,13 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if (getBoolValor(resultado1.valor) == (Double) resultado2.valor) {
+                                if (getBoolValor(resultado1.valor) == (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "bool":
-                                if ((Boolean) resultado1.valor == (Boolean) resultado2.valor) {
+                                if ((boolean) resultado1.valor == (boolean) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -166,7 +166,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((char) resultado1.valor == (Double) resultado2.valor) {
+                                if ((char) resultado1.valor == (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -237,7 +237,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((int) resultado1.valor != (Double) resultado2.valor) {
+                                if ((int) resultado1.valor != (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -264,25 +264,25 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                     case "decimal":
                         switch (resultado2.tipo) {
                             case "entero":
-                                if ((Double) resultado1.valor != (int) resultado2.valor) {
+                                if ((double) resultado1.valor != (int) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((Double) resultado1.valor != (Double) resultado2.valor) {
+                                if ((double) resultado1.valor != (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "bool":
-                                if ((Double) resultado1.valor != getBoolValor(resultado2.valor)) {
+                                if ((double) resultado1.valor != getBoolValor(resultado2.valor)) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "caracter":
-                                if ((Double) resultado1.valor != (char) resultado2.valor) {
+                                if ((double) resultado1.valor != (char) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -303,13 +303,13 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if (getBoolValor(resultado1.valor) != (Double) resultado2.valor) {
+                                if (getBoolValor(resultado1.valor) != (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "bool":
-                                if ((Boolean) resultado1.valor != (Boolean) resultado2.valor) {
+                                if ((boolean) resultado1.valor != (boolean) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -339,7 +339,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((char) resultado1.valor != (Double) resultado2.valor) {
+                                if ((char) resultado1.valor != (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -410,7 +410,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((int) resultado1.valor > (int) resultado2.valor) {
+                                if ((int) resultado1.valor > (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -437,25 +437,25 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                     case "decimal":
                         switch (resultado2.tipo) {
                             case "entero":
-                                if ((int) resultado1.valor > (Double) resultado2.valor) {
+                                if ((double) resultado1.valor > (int) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((Double) resultado1.valor > (Double) resultado2.valor) {
+                                if ((double) resultado1.valor > (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "bool":
-                                if ((Double) resultado1.valor > getBoolValor(resultado2.valor)) {
+                                if ((double) resultado1.valor > getBoolValor(resultado2.valor)) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "caracter":
-                                if ((Double) resultado1.valor > (char) resultado2.valor) {
+                                if ((double) resultado1.valor > (char) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -476,7 +476,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if (getBoolValor(resultado1.valor) > (Double) resultado2.valor) {
+                                if (getBoolValor(resultado1.valor) > (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -512,7 +512,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((char) resultado1.valor > (Double) resultado2.valor) {
+                                if ((char) resultado1.valor > (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -547,7 +547,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                 Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "No es posible comparar valores tipo numerico con cadenas");
                                 break;
                             case "bool":
-                                if (getStringValor(resultado2.valor, raiz) > getBoolValor(resultado2.valor)) {
+                                if (getStringValor(resultado1.valor, raiz) > getBoolValor(resultado2.valor)) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -586,7 +586,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((int) resultado1.valor >= (int) resultado2.valor) {
+                                if ((int) resultado1.valor >= (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -613,25 +613,25 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                     case "decimal":
                         switch (resultado2.tipo) {
                             case "entero":
-                                if ((int) resultado1.valor >= (Double) resultado2.valor) {
+                                if ((double) resultado1.valor >= (int) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((Double) resultado1.valor >= (Double) resultado2.valor) {
+                                if ((double) resultado1.valor >= (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "bool":
-                                if ((Double) resultado1.valor >= getBoolValor(resultado2.valor)) {
+                                if ((double) resultado1.valor >= getBoolValor(resultado2.valor)) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "caracter":
-                                if ((Double) resultado1.valor >= (char) resultado2.valor) {
+                                if ((double) resultado1.valor >= (char) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -652,7 +652,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if (getBoolValor(resultado1.valor) >= (Double) resultado2.valor) {
+                                if (getBoolValor(resultado1.valor) >= (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -688,7 +688,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((char) resultado1.valor >= (Double) resultado2.valor) {
+                                if ((char) resultado1.valor >= (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -723,7 +723,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                 Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "No es posible comparar valores tipo numerico con cadenas");
                                 break;
                             case "bool":
-                                if (getStringValor(resultado2.valor, raiz) >= getBoolValor(resultado2.valor)) {
+                                if (getStringValor(resultado1.valor, raiz) >= getBoolValor(resultado2.valor)) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -765,7 +765,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((int) resultado1.valor > (int) resultado2.valor) {
+                                if ((int) resultado1.valor > (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -792,25 +792,25 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                     case "decimal":
                         switch (resultado2.tipo) {
                             case "entero":
-                                if ((int) resultado1.valor > (Double) resultado2.valor) {
+                                if ((double) resultado1.valor > (int) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((Double) resultado1.valor > (Double) resultado2.valor) {
+                                if ((double) resultado1.valor > (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "bool":
-                                if ((Double) resultado1.valor > getBoolValor(resultado2.valor)) {
+                                if ((double) resultado1.valor > getBoolValor(resultado2.valor)) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "caracter":
-                                if ((Double) resultado1.valor > (char) resultado2.valor) {
+                                if ((double) resultado1.valor > (char) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -831,7 +831,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if (getBoolValor(resultado1.valor) > (Double) resultado2.valor) {
+                                if (getBoolValor(resultado1.valor) > (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -867,7 +867,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((char) resultado1.valor > (Double) resultado2.valor) {
+                                if ((char) resultado1.valor > (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -902,7 +902,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                 Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "No es posible comparar valores tipo numerico con cadenas");
                                 break;
                             case "bool":
-                                if (getStringValor(resultado2.valor, raiz) > getBoolValor(resultado2.valor)) {
+                                if (getStringValor(resultado1.valor, raiz) > getBoolValor(resultado2.valor)) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -944,7 +944,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((int) resultado1.valor >= (int) resultado2.valor) {
+                                if ((int) resultado1.valor >= (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -971,25 +971,25 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                     case "decimal":
                         switch (resultado2.tipo) {
                             case "entero":
-                                if ((int) resultado1.valor >= (Double) resultado2.valor) {
+                                if ((double) resultado1.valor >= (int) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((Double) resultado1.valor >= (Double) resultado2.valor) {
+                                if ((double) resultado1.valor >= (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "bool":
-                                if ((Double) resultado1.valor >= getBoolValor(resultado2.valor)) {
+                                if ((double) resultado1.valor >= getBoolValor(resultado2.valor)) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
                                 }
                             case "caracter":
-                                if ((Double) resultado1.valor >= (char) resultado2.valor) {
+                                if ((double) resultado1.valor >= (char) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -1010,7 +1010,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if (getBoolValor(resultado1.valor) >= (Double) resultado2.valor) {
+                                if (getBoolValor(resultado1.valor) >= (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -1046,7 +1046,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                     return new ResultadoG("bool", false);
                                 }
                             case "decimal":
-                                if ((char) resultado1.valor >= (Double) resultado2.valor) {
+                                if ((char) resultado1.valor >= (double) resultado2.valor) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);
@@ -1081,7 +1081,7 @@ public class OperacionRelacionalG extends OperacionAbstracta {
                                 Inicio.reporteError.agregar("Semantico", raiz.linea, raiz.columna, "No es posible comparar valores tipo numerico con cadenas");
                                 break;
                             case "bool":
-                                if (getStringValor(resultado2.valor, raiz) >= getBoolValor(resultado2.valor)) {
+                                if (getStringValor(resultado1.valor, raiz) >= getBoolValor(resultado2.valor)) {
                                     return new ResultadoG("bool", true);
                                 } else {
                                     return new ResultadoG("bool", false);

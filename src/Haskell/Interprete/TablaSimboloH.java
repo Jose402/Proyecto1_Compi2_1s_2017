@@ -5,6 +5,7 @@
  */
 package Haskell.Interprete;
 
+import Interfaz.Inicio;
 import java.util.*;
 
 /**
@@ -32,6 +33,7 @@ public class TablaSimboloH {
             return true;
         } else {
             //si el simbolo ya existe no se agrega a la tabla
+
             return false;
         }
     }

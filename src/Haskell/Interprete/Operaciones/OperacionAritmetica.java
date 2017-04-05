@@ -7,6 +7,7 @@ package Haskell.Interprete.Operaciones;
 
 import Ast.Nodo;
 import Haskell.Interprete.FuncionH;
+import Haskell.Interprete.Interprete;
 import Haskell.Interprete.Lista;
 import Haskell.Interprete.ResultadoH;
 import Haskell.Interprete.SimboloH;
@@ -44,8 +45,13 @@ public class OperacionAritmetica {
                 break;
             case "unitario":
                 resultado1 = resolver(raiz.hijos.get(0));
-                Double negativo = Double.parseDouble(resultado1.valor) * -1;
-                return new ResultadoH(resultado1.tipo, negativo + "");
+                if (resultado1 != null) {
+                    Double negativo = Double.parseDouble(resultado1.valor) * -1;
+                    return new ResultadoH(resultado1.tipo, negativo + "");
+                } else {
+                    Inicio.reporteError2.agregar("Semantico", raiz.linea, raiz.columna, "No se pudo realizar la operacion unitaria", Inicio.interprete.archivo);
+                    return null;
+                }
             case "acceso":
                 SimboloH s = null;
                 if (raiz.hijos.get(0).etiqueta.equals("id")) {
@@ -62,13 +68,17 @@ public class OperacionAritmetica {
                     for (Nodo nodo : valores.hijos) {
                         opN = new OperacionNativa(tabla);
                         ResultadoH r = opN.operar(nodo);
-                        Double d = Double.parseDouble(r.valor);
-                        index.add(d.intValue());
+                        if (r != null) {
+                            Double d = Double.parseDouble(r.valor);
+                            index.add(d.intValue());
+                        } else {
+                            Inicio.reporteError2.agregar("Semantico", nodo.linea, nodo.columna, "Indice invalido", Inicio.interprete.archivo);
+                        }
                     }
                     ResultadoH acceso = s.lista.getValor(index);
                     return acceso;
                 } else {
-                    System.out.println("Error semantico,la lista no existe");
+                    Inicio.reporteError2.agregar("Semantico", raiz.linea, raiz.columna, "La lista no existe", Inicio.interprete.archivo);
                 }
             case "id":
                 if (tabla.existe(raiz.valor)) {
@@ -79,7 +89,7 @@ public class OperacionAritmetica {
                         return new ResultadoH(variable.tipo, variable.valor);
                     }
                 } else {
-                    System.out.println("Error semantico, la varibale no existe!!!");
+                    Inicio.reporteError2.agregar("Semantico", raiz.linea, raiz.columna, "La variable " + raiz.valor + " no existe", Inicio.interprete.archivo);
                 }
             case "numero":
                 return new ResultadoH(raiz.etiqueta, raiz.valor);
@@ -92,6 +102,7 @@ public class OperacionAritmetica {
                 if (funcion.retorno != null) {
                     return new ResultadoH(funcion.tipo, funcion.retorno.valor);
                 } else {
+                    Inicio.reporteError2.agregar("Semantico", raiz.linea, raiz.columna, "Se produjo un error al momento de ejecutar el metodo", Inicio.interprete.archivo);
                     return new ResultadoH("-1", "0");
                 }
             default:
@@ -113,22 +124,39 @@ public class OperacionAritmetica {
         if (estado) {
             switch (raiz.etiqueta) {
                 case "+":
-                    return new ResultadoH(resultado1.tipo, (valor1 + valor2) + "");
+                    return new ResultadoH("numero", (valor1 + valor2) + "");
                 case "-":
-                    return new ResultadoH(resultado1.tipo, (valor1 - valor2) + "");
+                    return new ResultadoH("numero", (valor1 - valor2) + "");
                 case "*":
                     return new ResultadoH(resultado1.tipo, (valor1 * valor2) + "");
                 case "/":
-                    return new ResultadoH(resultado1.tipo, (valor1 / valor2) + "");
+                    if (valor2 == 0) {
+                        Inicio.reporteError2.agregar("Semantico", raiz.linea, raiz.columna, "No se puede dividir un numero por 0", Inicio.interprete.archivo);
+                        return new ResultadoH("-1", "0");
+                    }
+                    return new ResultadoH("numero", (valor1 / valor2) + "");
                 case "^":
-                    return new ResultadoH(resultado1.tipo, (Math.pow(valor1, valor2)) + "");
+                    if (valor2 < 0 && valor1 == 0) {
+                        Inicio.reporteError2.agregar("Semantico", raiz.linea, raiz.columna, "No se puede dividir un numero dentro de 0", Inicio.interprete.archivo);
+                        return new ResultadoH("-1", "0");
+                    }
+                    return new ResultadoH("numero", (Math.pow(valor1, valor2)) + "");
                 case "mod":
-                    return new ResultadoH(resultado1.tipo, (valor1 % valor2) + "");
+                    if (valor2 == 0) {
+                        Inicio.reporteError2.agregar("Semantico", raiz.linea, raiz.columna, "No se puede dividir un numero por 0", Inicio.interprete.archivo);
+                        return new ResultadoH("-1", "0");
+                    }
+                    return new ResultadoH("numero", (valor1 % valor2) + "");
                 case "sqrt"://aun falta implementarla
-                    return new ResultadoH(resultado1.tipo, (Math.pow(valor2, 1 / valor1)) + "");
+                    if (valor1 <= 0 && valor2 == 0) {
+                        Inicio.reporteError2.agregar("Semantico", raiz.linea, raiz.columna, "No se puede dividir un numero dentro de 0", Inicio.interprete.archivo);
+                        return new ResultadoH("-1", "0");
+                    }
+                    return new ResultadoH("numero", (Math.pow(valor2, 1 / valor1)) + "");
             }
         } else {
-            System.out.println("Error semantico,los tipos de datos son diferentes");
+
+            Inicio.reporteError2.agregar("Semantico", raiz.linea, raiz.columna, "Los tipos de datos a operar son diferentes", Inicio.interprete.archivo);
         }
         return new ResultadoH("-1", "0");
     }
